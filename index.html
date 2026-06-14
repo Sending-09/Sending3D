@@ -16,42 +16,23 @@
 html { scroll-behavior: smooth; }
 body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; font-weight:300; line-height:1.6; min-height:100vh; overflow-x:hidden; }
 
-/* ── NAV ── */
-nav {
-  position:sticky; top:0; z-index:200;
-  background:rgba(14,14,14,0.95); backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--border);
-  display:flex; align-items:center; justify-content:space-between;
-  padding:0 var(--pad); height:60px;
-}
-.logo {
-  font-family:'Cormorant Garamond',serif; font-size:clamp(1.2rem,4vw,1.55rem);
-  font-weight:300; letter-spacing:.12em; color:var(--accent);
-  text-transform:uppercase; cursor:pointer; user-select:none; flex-shrink:0;
-}
-/* desktop links */
+/* NAV */
+nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backdrop-filter:blur(14px); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 var(--pad); height:60px; }
+.logo { font-family:'Cormorant Garamond',serif; font-size:clamp(1.2rem,4vw,1.55rem); font-weight:300; letter-spacing:.12em; color:var(--accent); text-transform:uppercase; cursor:pointer; user-select:none; flex-shrink:0; }
 .nav-links { display:flex; gap:clamp(1rem,3vw,2rem); list-style:none; }
 .nav-links a { color:var(--muted); text-decoration:none; font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; transition:color .2s; cursor:pointer; white-space:nowrap; }
 .nav-links a:hover { color:var(--accent); }
-
-/* hamburger */
 .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:6px; background:none; border:none; }
 .hamburger span { display:block; width:22px; height:1.5px; background:var(--muted); transition:all .3s; }
 .hamburger.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
 .hamburger.open span:nth-child(2) { opacity:0; }
 .hamburger.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
-
-/* mobile menu */
-.mobile-menu {
-  display:none; position:fixed; top:60px; left:0; right:0; bottom:0;
-  background:rgba(10,10,10,0.98); z-index:190; flex-direction:column;
-  align-items:center; justify-content:center; gap:2.5rem;
-}
+.mobile-menu { display:none; position:fixed; top:60px; left:0; right:0; bottom:0; background:rgba(10,10,10,0.98); z-index:190; flex-direction:column; align-items:center; justify-content:center; gap:2.5rem; }
 .mobile-menu.open { display:flex; }
 .mobile-menu a { color:var(--text); text-decoration:none; font-family:'Cormorant Garamond',serif; font-size:clamp(1.8rem,6vw,2.4rem); font-weight:300; letter-spacing:.08em; cursor:pointer; transition:color .2s; }
 .mobile-menu a:hover { color:var(--accent); }
 
-/* ── DEV TOOLBAR ── */
+/* DEV TOOLBAR */
 #devToolbar { display:none; background:#0a0a0a; border-bottom:1px solid var(--accent2); padding:.6rem var(--pad); align-items:center; gap:.6rem; flex-wrap:wrap; }
 #devToolbar.visible { display:flex; }
 .dev-label { font-size:.65rem; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-right:.2rem; }
@@ -61,7 +42,7 @@ nav {
 .dev-exit { margin-left:auto; color:var(--danger); border-color:#3a1a1a; }
 .dev-exit:hover { background:#1a0a0a; border-color:var(--danger); }
 
-/* ── HERO ── */
+/* HERO */
 #home { padding:clamp(3rem,8vw,6rem) var(--pad) clamp(2.5rem,6vw,5rem); }
 .hero-eyebrow { font-size:clamp(.65rem,.8vw,.75rem); letter-spacing:.2em; text-transform:uppercase; color:var(--accent); margin-bottom:1rem; }
 #hero-title { font-family:'Cormorant Garamond',serif; font-size:clamp(2.4rem,7vw,5rem); font-weight:300; line-height:1.05; margin-bottom:1.2rem; }
@@ -69,7 +50,7 @@ nav {
 #hero-sub { color:var(--muted); font-size:clamp(.88rem,1.5vw,.95rem); max-width:480px; line-height:1.8; }
 .divider { border:none; border-top:1px solid var(--border); margin:0 var(--pad); }
 
-/* ── ABOUT ── */
+/* ABOUT */
 #about { padding:clamp(2.5rem,6vw,4rem) var(--pad); }
 #about h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(1.6rem,4vw,2rem); font-weight:300; margin-bottom:1.2rem; color:var(--accent); }
 #about-text { color:var(--muted); font-size:clamp(.88rem,1.5vw,.95rem); line-height:1.85; max-width:580px; }
@@ -78,21 +59,14 @@ nav {
 .edit-hint { font-size:.7rem; color:var(--accent2); letter-spacing:.08em; margin-top:.8rem; display:none; }
 .edit-hint.visible { display:block; }
 
-/* ── SECTION HEADER ── */
+/* SECTION HEADER */
 .section-header { padding:clamp(2rem,5vw,3rem) var(--pad) 1.5rem; }
 .section-header h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(1.5rem,4vw,1.8rem); font-weight:300; }
 
-/* ── PRODUCT GRID ── */
-.products-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-  gap:1.5px;
-  border-top:1px solid var(--border);
-  border-left:1px solid var(--border);
-  margin:0 var(--pad) clamp(2rem,6vw,4rem);
-}
+/* GRID */
+.products-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap:1.5px; border-top:1px solid var(--border); border-left:1px solid var(--border); margin:0 var(--pad) clamp(2rem,6vw,4rem); }
 
-/* ── CARD ── */
+/* CARD */
 .card { background:var(--card); border-right:1px solid var(--border); border-bottom:1px solid var(--border); display:flex; flex-direction:column; transition:background .2s; }
 .card:hover { background:#202020; }
 .card-img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; }
@@ -108,21 +82,20 @@ nav {
 .btn-buy { width:calc(100% - 2rem); margin:0 1rem 1rem; padding:.65rem; background:transparent; border:1px solid var(--accent2); color:var(--accent); font-family:'DM Sans',sans-serif; font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:all .2s; border-radius:2px; }
 .btn-buy:hover { background:var(--accent); color:var(--bg); border-color:var(--accent); }
 
-/* ── ADMIN PANEL ── */
+/* ADMIN PANEL */
 .admin-panel { display:none; background:#0f0f0f; border-top:1px solid var(--border); padding:1.1rem; flex-direction:column; gap:.8rem; }
 .admin-panel.visible { display:flex; }
 .admin-panel label { font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); display:block; margin-bottom:.2rem; }
 .admin-panel input, .admin-panel textarea, .admin-panel select { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Sans',sans-serif; font-size:.84rem; padding:.48rem .65rem; border-radius:2px; transition:border-color .2s; resize:vertical; }
 .admin-panel input:focus, .admin-panel textarea:focus, .admin-panel select:focus { outline:none; border-color:var(--accent); }
-.admin-row { display:flex; gap:.5rem; }
-.admin-row > div { flex:1; min-width:0; }
+.admin-row { display:flex; gap:.5rem; } .admin-row > div { flex:1; min-width:0; }
 .admin-actions { display:flex; gap:.5rem; margin-top:.2rem; }
 .btn-save { flex:1; padding:.52rem; background:var(--accent); color:var(--bg); border:none; font-family:'DM Sans',sans-serif; font-size:.73rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; border-radius:2px; }
 .btn-save:hover { opacity:.85; }
 .btn-delete { padding:.52rem .8rem; background:none; border:1px solid #3a1a1a; color:var(--danger); font-family:'DM Sans',sans-serif; font-size:.73rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; border-radius:2px; }
 .btn-delete:hover { background:#1a0808; }
 
-/* ── PHOTO UPLOAD ── */
+/* PHOTO UPLOAD */
 .photo-tabs { display:flex; margin-bottom:.5rem; }
 .photo-tab { flex:1; padding:.35rem; background:none; border:1px solid var(--border); color:var(--muted); font-family:'DM Sans',sans-serif; font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; transition:all .2s; }
 .photo-tab:first-child { border-radius:2px 0 0 2px; }
@@ -136,7 +109,7 @@ nav {
 .photo-preview { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:2px; display:none; margin-top:.5rem; border:1px solid var(--border); }
 .photo-preview.visible { display:block; }
 
-/* ── ADD PRODUCT ── */
+/* ADD PRODUCT */
 .add-product-section { margin:0 var(--pad) clamp(2rem,5vw,5rem); display:none; border:1px solid var(--border); background:var(--card); padding:clamp(1.2rem,3vw,2rem); border-radius:2px; }
 .add-product-section.visible { display:block; }
 .add-product-section h3 { font-family:'Cormorant Garamond',serif; font-size:clamp(1.2rem,3vw,1.4rem); font-weight:300; margin-bottom:1.3rem; color:var(--accent); }
@@ -148,7 +121,7 @@ nav {
 .btn-add-submit { margin-top:1rem; padding:.7rem 1.8rem; background:var(--accent); color:var(--bg); border:none; font-family:'DM Sans',sans-serif; font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; border-radius:2px; }
 .btn-add-submit:hover { opacity:.85; }
 
-/* ── CONTACT ── */
+/* CONTACT */
 #contact { border-top:1px solid var(--border); padding:clamp(2.5rem,6vw,4rem) var(--pad) clamp(2rem,5vw,3rem); display:grid; grid-template-columns:1fr 1fr; gap:clamp(1.5rem,4vw,3rem); align-items:start; }
 .contact-left h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(1.6rem,4vw,2.2rem); font-weight:300; color:var(--accent); margin-bottom:.8rem; }
 .contact-left p { color:var(--muted); font-size:clamp(.85rem,1.5vw,.9rem); line-height:1.8; }
@@ -166,70 +139,59 @@ nav {
 .contact-edit-form input:focus { outline:none; border-color:var(--accent); }
 .btn-save-contact { padding:.52rem 1.3rem; background:var(--accent); color:var(--bg); border:none; font-family:'DM Sans',sans-serif; font-size:.73rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; border-radius:2px; width:fit-content; }
 
-/* ── BOTTOM BAR ── */
 .bottom-bar { border-top:1px solid var(--border); padding:1rem var(--pad); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem; }
 .bottom-bar .logo { font-size:1rem; cursor:default; }
 .bottom-bar p { font-size:.7rem; color:var(--muted); }
 
-/* ── LOGIN MODAL ── */
+/* FIREBASE STATUS BANNER */
+#fb-banner { display:none; background:#1a0a0a; border-bottom:1px solid var(--danger); padding:.5rem var(--pad); font-size:.75rem; color:#e07070; letter-spacing:.06em; }
+#fb-banner.visible { display:block; }
+
+/* LOGIN MODAL */
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.9); z-index:500; align-items:center; justify-content:center; padding:1rem; }
 .modal-overlay.visible { display:flex; }
 .modal { background:var(--card); border:1px solid var(--border); padding:2rem; width:100%; max-width:340px; border-radius:3px; }
 .modal h3 { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; color:var(--accent); margin-bottom:.4rem; }
-.modal p { font-size:.8rem; color:var(--muted); margin-bottom:1.3rem; }
+.modal p { font-size:.8rem; color:var(--muted); margin-bottom:1.3rem; line-height:1.6; }
 .modal input { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Sans',sans-serif; font-size:1rem; padding:.65rem .85rem; border-radius:2px; margin-bottom:.8rem; letter-spacing:.1em; }
 .modal input:focus { outline:none; border-color:var(--accent); }
 .modal-error { font-size:.73rem; color:var(--danger); margin-bottom:.7rem; display:none; }
 .modal-error.visible { display:block; }
 .modal-actions { display:flex; gap:.6rem; }
 .btn-modal-login { flex:1; padding:.62rem; background:var(--accent); color:var(--bg); border:none; font-family:'DM Sans',sans-serif; font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; border-radius:2px; }
-.btn-modal-cancel { padding:.62rem .9rem; background:none; border:1px solid var(--border); color:var(--muted); font-family:'DM Sans',sans-serif; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; border-radius:2px; }
+.btn-modal-cancel { padding:.62rem .9rem; background:none; border:1px solid var(--border); color:var(--muted); font-family:'DM Sans',sans-serif; font-size:.78rem; cursor:pointer; border-radius:2px; }
+
+/* LOADING SPINNER */
+.spinner { display:none; text-align:center; padding:3rem; color:var(--muted); font-size:.85rem; letter-spacing:.1em; }
+.spinner.visible { display:block; }
 
 .empty-state { grid-column:1/-1; padding:4rem 1rem; text-align:center; color:var(--muted); font-size:.9rem; }
 .toast { position:fixed; bottom:1.5rem; right:1.5rem; left:1.5rem; max-width:340px; margin:0 auto; background:var(--accent); color:var(--bg); padding:.7rem 1.2rem; border-radius:2px; font-size:.8rem; letter-spacing:.06em; transform:translateY(20px); opacity:0; transition:all .3s; pointer-events:none; z-index:999; text-align:center; }
 .toast.show { transform:translateY(0); opacity:1; }
 
-/* ══════════════════════════════════
-   RESPONSIVE BREAKPOINTS
-══════════════════════════════════ */
-
-/* Tablet: hide desktop nav, show hamburger */
 @media (max-width: 768px) {
   .nav-links { display:none; }
   .hamburger { display:flex; }
-
   #contact { grid-template-columns:1fr; }
-
   .admin-row { flex-direction:column; gap:.5rem; }
 }
-
-/* Phone */
 @media (max-width: 480px) {
-  nav { height:56px; }
-  .mobile-menu { top:56px; }
-
-  #home { padding:2.5rem 1rem 2rem; }
-  #about { padding:2rem 1rem; }
-  .section-header { padding:2rem 1rem 1.2rem; }
-  .divider { margin:0 1rem; }
-  .products-grid { margin:0 0 2rem; border-left:none; border-right:none; }
+  nav { height:56px; } .mobile-menu { top:56px; }
+  .products-grid { margin:0 0 2rem; border-left:none; grid-template-columns:1fr; }
   .card { border-left:none; border-right:none; }
   .add-product-section { margin:0 1rem 2.5rem; }
   #contact { padding:2rem 1rem; }
-  .bottom-bar { padding:.9rem 1rem; flex-direction:column; align-items:flex-start; gap:.3rem; }
-
-  /* Single column grid on small phones */
-  .products-grid { grid-template-columns:1fr; }
+  .bottom-bar { flex-direction:column; align-items:flex-start; }
 }
-
-/* Very wide screens: cap grid columns */
 @media (min-width: 1400px) {
-  .products-grid { grid-template-columns:repeat(4, 1fr); }
-  #home, #about { max-width:900px; }
+  .products-grid { grid-template-columns:repeat(4,1fr); }
 }
 </style>
 </head>
 <body>
+
+<!-- FIREBASE NOT CONFIGURED BANNER -->
+<div id="fb-banner">⚠ Firebase not configured — running in offline mode. See setup guide to connect your database.</div>
 
 <!-- LOGIN MODAL -->
 <div class="modal-overlay" id="loginModal">
@@ -262,7 +224,7 @@ nav {
     <li><a onclick="navTo('shop')">Shop</a></li>
     <li><a onclick="navTo('contact')">Contact</a></li>
   </ul>
-  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()">
     <span></span><span></span><span></span>
   </button>
 </nav>
@@ -282,7 +244,6 @@ nav {
   <h1 id="hero-title">Printed with<br><em>precision</em></h1>
   <p id="hero-sub">Custom 3D-printed objects, prototypes, and art pieces — designed and produced with care. Every order shaped from scratch.</p>
 </section>
-
 <hr class="divider">
 
 <!-- ABOUT -->
@@ -291,14 +252,13 @@ nav {
   <p id="about-text">We are Sending 3D — a small studio passionate about turning ideas into physical objects. From functional parts to decorative pieces, we work with a range of materials and finishes. Get in touch to discuss your project.</p>
   <p class="edit-hint" id="aboutNote">✦ Click the text above to edit. Saves automatically when you click away.</p>
 </section>
-
 <hr class="divider">
 
 <!-- SHOP -->
 <div id="shop">
   <div class="section-header"><h2>Our Products</h2></div>
+  <div class="spinner" id="loadingSpinner">Loading products…</div>
   <div class="products-grid" id="productsGrid"></div>
-
   <div class="add-product-section" id="addSection">
     <h3>Add New Product</h3>
     <div class="add-grid">
@@ -315,25 +275,14 @@ nav {
       </div>
       <div class="field full"><label>Description</label><textarea id="new-desc" rows="2" placeholder="Short description…"></textarea></div>
       <div class="field full">
-        <label>Photo</label>
-        <div class="photo-tabs">
-          <button class="photo-tab active" id="new-tab-upload" onclick="switchNewTab('upload')">Upload Photo</button>
-          <button class="photo-tab" id="new-tab-url" onclick="switchNewTab('url')">Use URL</button>
-        </div>
-        <div id="new-upload-area" class="photo-upload-area">
-          <input type="file" accept="image/*" onchange="handleNewPhoto(this)">
-          <div class="upload-label">📷 Click to choose a photo — <span>or drag &amp; drop</span></div>
-        </div>
-        <div id="new-url-area" style="display:none">
-          <input id="new-img-url" placeholder="https://…" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;padding:.55rem .75rem;border-radius:2px;">
-        </div>
-        <img id="new-photo-preview" class="photo-preview" alt="preview">
+        <label>Photo URL (from Imgur, Google Photos, etc.)</label>
+        <input id="new-img-url" placeholder="https://…">
+        <p style="font-size:.68rem;color:var(--muted);margin-top:.3rem;">Tip: upload your photo to <a href="https://imgur.com" target="_blank" style="color:var(--accent)">imgur.com</a> and paste the link here.</p>
       </div>
     </div>
     <button class="btn-add-submit" onclick="addProduct()">Add Product</button>
   </div>
 </div>
-
 <hr class="divider">
 
 <!-- CONTACT -->
@@ -366,309 +315,333 @@ nav {
   <div class="logo">Sending 3D</div>
   <p>© 2026 Sending 3D — All rights reserved.</p>
 </div>
-
 <div class="toast" id="toast"></div>
 
-<script>
-// ── CONFIG ─────────────────────────────────────────────────
+<!-- FIREBASE SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, getDocs, addDoc, setDoc, deleteDoc, doc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ══════════════════════════════════════════════════════════
+//  🔧 PASTE YOUR FIREBASE CONFIG HERE
+//  (Replace ALL the placeholder values below)
+// ══════════════════════════════════════════════════════════
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyCFoL8gVzGprKW60CfE2OSKf4QipyVhGaU",
+  authDomain:        "sending3d.firebaseapp.com",
+  projectId:         "sending3d",
+  storageBucket:     "sending3d.firebasestorage.app",
+  messagingSenderId: "29005583314",
+  appId:             "1:29005583314:web:7e2b99c1cadb3717f56e0b"
+};
+// ══════════════════════════════════════════════════════════
+
 const DEV_PASSWORD = 'sending3d2026';
-const PROD_KEY = 'sending3d_products';
-const CONTACT_KEY = 'sending3d_contact';
-const ABOUT_KEY = 'sending3d_about';
 const EMOJIS = ['🖨️','⚙️','🔩','🧩','🪄','📐','🔧','💠'];
 
+// Detect if Firebase is configured
+const FB_READY = FIREBASE_CONFIG.apiKey !== 'PASTE_YOUR_apiKey_HERE';
+
+let db, productsCol, settingsCol;
+let products = [];
+let siteSettings = { email:'hello@sending3d.no', phone:'+47 000 00 000', about:'We are Sending 3D — a small studio passionate about turning ideas into physical objects. From functional parts to decorative pieces, we work with a range of materials and finishes. Get in touch to discuss your project.' };
+let devMode = false, shopEditMode = false, aboutEditing = false;
+
+// Default products shown before Firebase loads
 const defaultProducts = [
-  { id:1, name:'Cable Management Clip', category:'Functional', price:89, stock:'in',
-    desc:'Stackable cable clip for desk or wall. Prints in PLA, matte black finish.',
-    img:'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=600&q=80' },
-  { id:2, name:'Custom Nameplate', category:'Decorative', price:149, stock:'in',
-    desc:'Personalised name or text plate in any font. Great for desks and doors.',
-    img:'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80' },
-  { id:3, name:'Miniature Figurine', category:'Art', price:249, stock:'low',
-    desc:'High-detail resin miniature printed at 0.05mm layer height.',
-    img:'https://images.unsplash.com/photo-1608501078713-8e445a709b39?w=600&q=80' },
-  { id:4, name:'Prototype Enclosure', category:'Engineering', price:399, stock:'in',
-    desc:"Custom-dimensioned project box. Send us your measurements and we'll print it.",
-    img:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80' },
+  { id:'1', name:'Cable Management Clip', category:'Functional', price:89, stock:'in', desc:'Stackable cable clip for desk or wall. Prints in PLA, matte black finish.', img:'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=600&q=80', order:1 },
+  { id:'2', name:'Custom Nameplate', category:'Decorative', price:149, stock:'in', desc:'Personalised name or text plate in any font. Great for desks and doors.', img:'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80', order:2 },
+  { id:'3', name:'Miniature Figurine', category:'Art', price:249, stock:'low', desc:'High-detail resin miniature printed at 0.05mm layer height.', img:'https://images.unsplash.com/photo-1608501078713-8e445a709b39?w=600&q=80', order:3 },
+  { id:'4', name:'Prototype Enclosure', category:'Engineering', price:399, stock:'in', desc:"Custom-dimensioned project box. Send us your measurements and we'll print it.", img:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80', order:4 },
 ];
 
-function loadProducts() {
-  try { var s=localStorage.getItem(PROD_KEY); return s?JSON.parse(s):JSON.parse(JSON.stringify(defaultProducts)); }
-  catch(e) { return JSON.parse(JSON.stringify(defaultProducts)); }
-}
-function saveProducts(p) {
-  try { localStorage.setItem(PROD_KEY,JSON.stringify(p)); }
-  catch(e) { showToast('Storage full — use image URLs instead of uploads'); }
-}
-function loadContact() {
-  try { var s=localStorage.getItem(CONTACT_KEY); return s?JSON.parse(s):{email:'hello@sending3d.no',phone:'+47 000 00 000'}; }
-  catch(e) { return {email:'hello@sending3d.no',phone:'+47 000 00 000'}; }
-}
-function saveContactData(c) { try { localStorage.setItem(CONTACT_KEY,JSON.stringify(c)); } catch(e){} }
-function loadAbout() { try { return localStorage.getItem(ABOUT_KEY)||null; } catch(e) { return null; } }
-function saveAbout(t) { try { localStorage.setItem(ABOUT_KEY,t); } catch(e){} }
+// ── INIT ─────────────────────────────────────────────────
+async function init() {
+  if (!FB_READY) {
+    document.getElementById('fb-banner').classList.add('visible');
+    products = defaultProducts;
+    render();
+    return;
+  }
+  try {
+    const app = initializeApp(FIREBASE_CONFIG);
+    db = getFirestore(app);
+    productsCol = collection(db, 'products');
+    settingsCol = collection(db, 'settings');
 
-var products = loadProducts();
-var devMode = false;
-var shopEditMode = false;
-var aboutEditing = false;
-var nextId = products.length ? Math.max.apply(null, products.map(function(p){return p.id;}))+1 : 1;
-var pending = {};
-var newPhotoData = '';
+    document.getElementById('loadingSpinner').classList.add('visible');
 
-// ── MOBILE MENU ───────────────────────────────────────────
-var menuOpen = false;
-function toggleMenu() {
-  menuOpen = !menuOpen;
-  document.getElementById('hamburger').classList.toggle('open', menuOpen);
-  document.getElementById('mobileMenu').classList.toggle('open', menuOpen);
-  document.body.style.overflow = menuOpen ? 'hidden' : '';
-}
-function navTo(id) {
-  if (menuOpen) toggleMenu();
-  if (id === 'home') { window.scrollTo({top:0,behavior:'smooth'}); return; }
-  var el = document.getElementById(id);
-  if (el) el.scrollIntoView({behavior:'smooth'});
+    // Live listener — updates instantly for all visitors
+    onSnapshot(productsCol, (snap) => {
+      products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      products.sort((a,b) => (a.order||0)-(b.order||0));
+      document.getElementById('loadingSpinner').classList.remove('visible');
+      render();
+    });
+
+    // Load settings
+    const settingsSnap = await getDocs(settingsCol);
+    settingsSnap.forEach(d => { Object.assign(siteSettings, d.data()); });
+    applySettings();
+
+    // Seed default products if DB is empty
+    const existing = await getDocs(productsCol);
+    if (existing.empty) {
+      for (const p of defaultProducts) {
+        const { id, ...data } = p;
+        await addDoc(productsCol, data);
+      }
+    }
+  } catch(e) {
+    console.error('Firebase error:', e);
+    document.getElementById('fb-banner').textContent = '⚠ Firebase error: ' + e.message;
+    document.getElementById('fb-banner').classList.add('visible');
+    products = defaultProducts;
+    document.getElementById('loadingSpinner').classList.remove('visible');
+    render();
+  }
 }
 
-// ── SECRET LOGO: click 5x ─────────────────────────────────
-var logoClicks=0, logoTimer;
-document.getElementById('logoBtn').addEventListener('click', function() {
-  logoClicks++;
-  clearTimeout(logoTimer);
-  logoTimer = setTimeout(function(){ logoClicks=0; }, 1500);
-  if (logoClicks >= 5) { logoClicks=0; openLogin(); }
+function applySettings() {
+  const em = document.getElementById('display-email');
+  const ph = document.getElementById('display-phone');
+  em.textContent = siteSettings.email; em.href = 'mailto:'+siteSettings.email;
+  ph.textContent = siteSettings.phone; ph.href = 'tel:'+siteSettings.phone.replace(/\s/g,'');
+  document.getElementById('edit-email').value = siteSettings.email;
+  document.getElementById('edit-phone').value = siteSettings.phone;
+  if (siteSettings.about) document.getElementById('about-text').textContent = siteSettings.about;
+}
+
+// ── RENDER ───────────────────────────────────────────────
+function render() {
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = '';
+  if (!products.length) {
+    grid.innerHTML = '<div class="empty-state">No products yet. Open Dev Mode → Edit Shop to add items.</div>';
+    return;
+  }
+  products.forEach(p => {
+    const stockLabel = p.stock==='in'?'In Stock':p.stock==='low'?'Low Stock':'Sold Out';
+    const stockClass = p.stock==='low'?'low':p.stock==='out'?'out':'';
+    const emoji = EMOJIS[Math.abs(hashCode(p.id)) % EMOJIS.length];
+    const imgHTML = p.img
+      ? `<img class="card-img" src="${p.img}" alt="${esc(p.name)}" onerror="this.outerHTML='<div class=card-img-placeholder>${emoji}</div>'">`
+      : `<div class="card-img-placeholder">${emoji}</div>`;
+
+    const card = document.createElement('div');
+    card.className = 'card'; card.id = 'card-'+p.id;
+    card.innerHTML = imgHTML
+      +`<div class="card-body">
+          <div class="card-category">${esc(p.category)}</div>
+          <div class="card-name">${esc(p.name)}</div>
+          <div class="card-desc">${esc(p.desc)}</div>
+          <div class="card-footer">
+            <div class="card-price">kr ${Number(p.price).toLocaleString('no-NO')}</div>
+            <div class="card-stock ${stockClass}">${stockLabel}</div>
+          </div>
+        </div>
+        <button class="btn-buy" ${p.stock==='out'?'disabled style="opacity:.4;cursor:not-allowed"':''} onclick="window._handleBuy('${p.id}')">
+          ${p.stock==='out'?'Sold Out':'Order Now'}
+        </button>
+        <div class="admin-panel ${shopEditMode?'visible':''}" id="admin-${p.id}">
+          <div>
+            <label>Photo URL</label>
+            <input id="img-url-${p.id}" placeholder="https://…" value="${esc(p.img||'')}" oninput="window._pendingUpdate('${p.id}','img',this.value)" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.84rem;padding:.48rem .65rem;border-radius:2px;">
+            <p style="font-size:.66rem;color:var(--muted);margin-top:.25rem;">Upload to <a href="https://imgur.com" target="_blank" style="color:var(--accent)">imgur.com</a> and paste the link.</p>
+            ${p.img?`<img class="photo-preview visible" src="${esc(p.img)}" alt="preview" style="margin-top:.5rem;">` : ''}
+          </div>
+          <div><label>Product Name</label><input value="${esc(p.name)}" oninput="window._pendingUpdate('${p.id}','name',this.value)"></div>
+          <div><label>Category</label><input value="${esc(p.category)}" oninput="window._pendingUpdate('${p.id}','category',this.value)"></div>
+          <div class="admin-row">
+            <div><label>Price (kr)</label><input type="number" value="${p.price}" oninput="window._pendingUpdate('${p.id}','price',this.value)"></div>
+            <div><label>Stock</label>
+              <select onchange="window._pendingUpdate('${p.id}','stock',this.value)">
+                <option value="in" ${p.stock==='in'?'selected':''}>In Stock</option>
+                <option value="low" ${p.stock==='low'?'selected':''}>Low Stock</option>
+                <option value="out" ${p.stock==='out'?'selected':''}>Sold Out</option>
+              </select>
+            </div>
+          </div>
+          <div><label>Description</label><textarea rows="2" oninput="window._pendingUpdate('${p.id}','desc',this.value)">${esc(p.desc)}</textarea></div>
+          <div class="admin-actions">
+            <button class="btn-save" onclick="window._saveCard('${p.id}')">Save Changes</button>
+            <button class="btn-delete" onclick="window._deleteProduct('${p.id}')">Delete</button>
+          </div>
+        </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function hashCode(str) { let h=0; for(let i=0;i<str.length;i++){h=Math.imul(31,h)+str.charCodeAt(i)|0;} return h; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/'/g,'&#39;'); }
+
+// Pending edits buffer
+const pending = {};
+window._pendingUpdate = (id,field,value) => { if(!pending[id])pending[id]={}; pending[id][field]=value; };
+
+window._saveCard = async (id) => {
+  if (!pending[id]) { showToast('No changes to save.'); return; }
+  const updates = { ...pending[id] };
+  if (updates.price) updates.price = Number(updates.price);
+  delete pending[id];
+  if (FB_READY && db) {
+    try { await setDoc(doc(db,'products',id), updates, {merge:true}); showToast('Saved to cloud ✓'); }
+    catch(e) { showToast('Save failed: '+e.message); }
+  } else {
+    const idx = products.findIndex(p=>p.id===id);
+    if(idx>-1){ Object.assign(products[idx], updates); render(); showToast('Saved (offline)'); }
+  }
+};
+
+window._deleteProduct = async (id) => {
+  if (!confirm('Remove this product?')) return;
+  if (FB_READY && db) {
+    try { await deleteDoc(doc(db,'products',id)); showToast('Product deleted ✓'); }
+    catch(e) { showToast('Delete failed: '+e.message); }
+  } else {
+    products = products.filter(p=>p.id!==id); render(); showToast('Deleted (offline)');
+  }
+};
+
+window.addProduct = async () => {
+  const name = document.getElementById('new-name').value.trim();
+  if (!name) { showToast('Please enter a product name.'); return; }
+  const newProd = {
+    name, category: document.getElementById('new-cat').value.trim()||'3D Print',
+    price: Number(document.getElementById('new-price').value)||0,
+    stock: document.getElementById('new-stock').value,
+    desc: document.getElementById('new-desc').value.trim(),
+    img: document.getElementById('new-img-url').value.trim(),
+    order: products.length + 1
+  };
+  if (FB_READY && db) {
+    try { await addDoc(productsCol, newProd); showToast('Product added to cloud ✓'); }
+    catch(e) { showToast('Error: '+e.message); return; }
+  } else {
+    newProd.id = Date.now().toString();
+    products.push(newProd); render(); showToast('Added (offline)');
+  }
+  ['new-name','new-cat','new-price','new-desc','new-img-url'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('new-stock').value='in';
+};
+
+// ── CONTACT SAVE ─────────────────────────────────────────
+window.saveContact = async () => {
+  const email = document.getElementById('edit-email').value.trim();
+  const phone = document.getElementById('edit-phone').value.trim();
+  if (!email) { showToast('Please enter an email.'); return; }
+  siteSettings.email = email; siteSettings.phone = phone;
+  applySettings(); toggleContactEdit();
+  if (FB_READY && db) {
+    try { await setDoc(doc(db,'settings','contact'), {email,phone}, {merge:true}); showToast('Contact saved to cloud ✓'); }
+    catch(e) { showToast('Saved locally only — DB error'); }
+  } else { showToast('Contact saved (offline)'); }
+};
+
+// ── ABOUT SAVE ───────────────────────────────────────────
+async function saveAbout(text) {
+  siteSettings.about = text;
+  if (FB_READY && db) {
+    try { await setDoc(doc(db,'settings','about'), {about:text}, {merge:true}); showToast('About saved to cloud ✓'); }
+    catch(e) { showToast('Saved locally only'); }
+  } else { showToast('Saved (offline)'); }
+}
+
+// ── DEV / NAV / UI (exposed to global scope) ─────────────
+let menuOpen=false;
+window.toggleMenu = () => {
+  menuOpen=!menuOpen;
+  document.getElementById('hamburger').classList.toggle('open',menuOpen);
+  document.getElementById('mobileMenu').classList.toggle('open',menuOpen);
+  document.body.style.overflow=menuOpen?'hidden':'';
+};
+window.navTo = (id) => {
+  if(menuOpen) window.toggleMenu();
+  if(id==='home'){window.scrollTo({top:0,behavior:'smooth'});return;}
+  const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth'});
+};
+
+let logoClicks=0,logoTimer;
+document.getElementById('logoBtn').addEventListener('click',()=>{
+  logoClicks++; clearTimeout(logoTimer);
+  logoTimer=setTimeout(()=>logoClicks=0,1500);
+  if(logoClicks>=5){logoClicks=0;openLogin();}
 });
 
-// ── LOGIN ─────────────────────────────────────────────────
-function openLogin() {
+window.openLogin=()=>{
   document.getElementById('loginModal').classList.add('visible');
-  setTimeout(function(){ document.getElementById('devPassword').focus(); }, 80);
-}
-function closeLogin() {
+  setTimeout(()=>document.getElementById('devPassword').focus(),80);
+};
+window.closeLogin=()=>{
   document.getElementById('loginModal').classList.remove('visible');
   document.getElementById('devPassword').value='';
   document.getElementById('loginError').classList.remove('visible');
-}
-function attemptLogin() {
-  var pw = document.getElementById('devPassword').value;
-  if (pw === DEV_PASSWORD) { closeLogin(); enterDev(); }
-  else {
-    document.getElementById('loginError').classList.add('visible');
-    document.getElementById('devPassword').value='';
-    document.getElementById('devPassword').focus();
-  }
-}
-function enterDev() {
-  devMode = true;
+};
+window.attemptLogin=()=>{
+  const pw=document.getElementById('devPassword').value;
+  if(pw===DEV_PASSWORD){closeLogin();enterDev();}
+  else{document.getElementById('loginError').classList.add('visible');document.getElementById('devPassword').value='';document.getElementById('devPassword').focus();}
+};
+function enterDev(){
+  devMode=true;
   document.getElementById('devToolbar').classList.add('visible');
   document.getElementById('contactEditBtn').classList.add('dev-visible');
   showToast('Developer mode active');
 }
-function exitDev() {
-  devMode = false;
-  if (shopEditMode) toggleShopEdit();
-  if (aboutEditing) toggleAboutEdit();
+window.exitDev=()=>{
+  devMode=false;
+  if(shopEditMode)window.toggleShopEdit();
+  if(aboutEditing)window.toggleAboutEdit();
   document.getElementById('devToolbar').classList.remove('visible');
   document.getElementById('contactEditBtn').classList.remove('dev-visible');
   document.getElementById('contactEditForm').classList.remove('visible');
   document.getElementById('contactEditBtn').textContent='✦ Edit Contact Info';
   document.getElementById('editContactBtn2').classList.remove('active');
   showToast('Exited developer mode');
-}
-
-// ── SHOP EDIT ─────────────────────────────────────────────
-function toggleShopEdit() {
-  shopEditMode = !shopEditMode;
-  document.getElementById('editShopBtn').classList.toggle('active', shopEditMode);
-  document.getElementById('addSection').classList.toggle('visible', shopEditMode);
-  document.querySelectorAll('.admin-panel').forEach(function(p){
-    p.classList.toggle('visible', shopEditMode);
-  });
-  if (shopEditMode) document.getElementById('shop').scrollIntoView({behavior:'smooth'});
-}
-
-// ── ABOUT EDIT ────────────────────────────────────────────
-function toggleAboutEdit() {
-  aboutEditing = !aboutEditing;
-  var at = document.getElementById('about-text');
-  at.contentEditable = aboutEditing ? 'true' : 'false';
-  document.getElementById('aboutNote').classList.toggle('visible', aboutEditing);
-  document.getElementById('editAboutBtn').classList.toggle('active', aboutEditing);
-  if (aboutEditing) {
+};
+window.toggleShopEdit=()=>{
+  shopEditMode=!shopEditMode;
+  document.getElementById('editShopBtn').classList.toggle('active',shopEditMode);
+  document.getElementById('addSection').classList.toggle('visible',shopEditMode);
+  document.querySelectorAll('.admin-panel').forEach(p=>p.classList.toggle('visible',shopEditMode));
+  if(shopEditMode) document.getElementById('shop').scrollIntoView({behavior:'smooth'});
+};
+window.toggleAboutEdit=()=>{
+  aboutEditing=!aboutEditing;
+  const at=document.getElementById('about-text');
+  at.contentEditable=aboutEditing?'true':'false';
+  document.getElementById('aboutNote').classList.toggle('visible',aboutEditing);
+  document.getElementById('editAboutBtn').classList.toggle('active',aboutEditing);
+  if(aboutEditing){
     document.getElementById('about').scrollIntoView({behavior:'smooth'});
     at.focus();
-    at.onblur = function(){ saveAbout(at.textContent); showToast('About text saved!'); };
+    at.onblur=()=>saveAbout(at.textContent);
   }
-}
-
-// ── RENDER ────────────────────────────────────────────────
-function render() {
-  var grid = document.getElementById('productsGrid');
-  grid.innerHTML = '';
-  if (!products.length) {
-    grid.innerHTML = '<div class="empty-state">No products yet. Open Dev Mode → Edit Shop to add items.</div>';
-    return;
-  }
-  products.forEach(function(p) {
-    var stockLabel = p.stock==='in'?'In Stock':p.stock==='low'?'Low Stock':'Sold Out';
-    var stockClass = p.stock==='low'?'low':p.stock==='out'?'out':'';
-    var emoji = EMOJIS[p.id % EMOJIS.length];
-    var imgHTML = p.img
-      ? '<img class="card-img" src="'+p.img+'" alt="'+esc(p.name)+'" onerror="this.outerHTML=\'<div class=card-img-placeholder>'+emoji+'</div>\'">'
-      : '<div class="card-img-placeholder">'+emoji+'</div>';
-
-    var card = document.createElement('div');
-    card.className = 'card'; card.id = 'card-'+p.id;
-    var existingUrl = p.img && !p.img.startsWith('data:') ? esc(p.img) : '';
-
-    card.innerHTML = imgHTML
-      +'<div class="card-body">'
-        +'<div class="card-category">'+esc(p.category)+'</div>'
-        +'<div class="card-name">'+esc(p.name)+'</div>'
-        +'<div class="card-desc">'+esc(p.desc)+'</div>'
-        +'<div class="card-footer">'
-          +'<div class="card-price">kr '+Number(p.price).toLocaleString('no-NO')+'</div>'
-          +'<div class="card-stock '+stockClass+'">'+stockLabel+'</div>'
-        +'</div>'
-      +'</div>'
-      +'<button class="btn-buy"'+(p.stock==='out'?' disabled style="opacity:.4;cursor:not-allowed"':'')+' onclick="handleBuy('+p.id+')">'+(p.stock==='out'?'Sold Out':'Order Now')+'</button>'
-      +'<div class="admin-panel'+(shopEditMode?' visible':'')+'" id="admin-'+p.id+'">'
-        +'<div><label>Photo</label>'
-          +'<div class="photo-tabs">'
-            +'<button class="photo-tab active" id="tab-upload-'+p.id+'" onclick="switchTab('+p.id+',\'upload\')">Upload</button>'
-            +'<button class="photo-tab" id="tab-url-'+p.id+'" onclick="switchTab('+p.id+',\'url\')">URL</button>'
-          +'</div>'
-          +'<div id="upload-area-'+p.id+'" class="photo-upload-area">'
-            +'<input type="file" accept="image/*" onchange="handlePhotoUpload('+p.id+',this)">'
-            +'<div class="upload-label">📷 Click to upload — <span>or drag &amp; drop</span></div>'
-          +'</div>'
-          +'<div id="url-area-'+p.id+'" style="display:none">'
-            +'<input id="img-url-'+p.id+'" placeholder="https://…" value="'+existingUrl+'" oninput="updateField('+p.id+',\'img\',this.value)" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:.84rem;padding:.48rem .65rem;border-radius:2px;">'
-          +'</div>'
-          +'<img id="preview-'+p.id+'" class="photo-preview'+(p.img?' visible':'')+'" src="'+(p.img||'')+'" alt="preview">'
-        +'</div>'
-        +'<div><label>Product Name</label><input value="'+esc(p.name)+'" oninput="updateField('+p.id+',\'name\',this.value)"></div>'
-        +'<div><label>Category</label><input value="'+esc(p.category)+'" oninput="updateField('+p.id+',\'category\',this.value)"></div>'
-        +'<div class="admin-row">'
-          +'<div><label>Price (kr)</label><input type="number" value="'+p.price+'" oninput="updateField('+p.id+',\'price\',this.value)"></div>'
-          +'<div><label>Stock</label><select onchange="updateField('+p.id+',\'stock\',this.value)">'
-            +'<option value="in"'+(p.stock==='in'?' selected':'')+'>In Stock</option>'
-            +'<option value="low"'+(p.stock==='low'?' selected':'')+'>Low Stock</option>'
-            +'<option value="out"'+(p.stock==='out'?' selected':'')+'>Sold Out</option>'
-          +'</select></div>'
-        +'</div>'
-        +'<div><label>Description</label><textarea rows="2" oninput="updateField('+p.id+',\'desc\',this.value)">'+esc(p.desc)+'</textarea></div>'
-        +'<div class="admin-actions">'
-          +'<button class="btn-save" onclick="saveCard('+p.id+')">Save Changes</button>'
-          +'<button class="btn-delete" onclick="deleteProduct('+p.id+')">Delete</button>'
-        +'</div>'
-      +'</div>';
-    grid.appendChild(card);
-  });
-}
-
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/'/g,'&#39;'); }
-
-function switchTab(id, tab) {
-  var u=document.getElementById('upload-area-'+id), r=document.getElementById('url-area-'+id);
-  var tu=document.getElementById('tab-upload-'+id), tr=document.getElementById('tab-url-'+id);
-  if(tab==='upload'){u.style.display='';r.style.display='none';tu.classList.add('active');tr.classList.remove('active');}
-  else{u.style.display='none';r.style.display='';tu.classList.remove('active');tr.classList.add('active');}
-}
-function handlePhotoUpload(id, input) {
-  var file=input.files[0]; if(!file)return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    var data=e.target.result;
-    updateField(id,'img',data);
-    var prev=document.getElementById('preview-'+id);
-    prev.src=data; prev.classList.add('visible');
-    showToast('Photo ready — click Save Changes!');
-  };
-  reader.readAsDataURL(file);
-}
-function switchNewTab(tab) {
-  var u=document.getElementById('new-upload-area'), r=document.getElementById('new-url-area');
-  var tu=document.getElementById('new-tab-upload'), tr=document.getElementById('new-tab-url');
-  if(tab==='upload'){u.style.display='';r.style.display='none';tu.classList.add('active');tr.classList.remove('active');}
-  else{u.style.display='none';r.style.display='';tu.classList.remove('active');tr.classList.add('active');}
-}
-function handleNewPhoto(input) {
-  var file=input.files[0]; if(!file)return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    newPhotoData=e.target.result;
-    var prev=document.getElementById('new-photo-preview');
-    prev.src=newPhotoData; prev.classList.add('visible');
-  };
-  reader.readAsDataURL(file);
-}
-
-function updateField(id,field,value){ if(!pending[id])pending[id]={}; pending[id][field]=value; }
-function saveCard(id) {
-  var idx=products.findIndex(function(p){return p.id===id;}); if(idx===-1)return;
-  if(pending[id]){ Object.assign(products[idx],pending[id]); if(products[idx].price)products[idx].price=Number(products[idx].price); delete pending[id]; }
-  saveProducts(products); render(); showToast('Product saved!');
-}
-function deleteProduct(id) {
-  if(!confirm('Remove this product?'))return;
-  products=products.filter(function(p){return p.id!==id;}); saveProducts(products); render(); showToast('Product removed.');
-}
-function addProduct() {
-  var name=document.getElementById('new-name').value.trim();
-  if(!name){showToast('Please enter a product name.');return;}
-  var urlImg=document.getElementById('new-img-url')?document.getElementById('new-img-url').value.trim():'';
-  products.push({id:nextId++,name:name,category:document.getElementById('new-cat').value.trim()||'3D Print',price:Number(document.getElementById('new-price').value)||0,stock:document.getElementById('new-stock').value,desc:document.getElementById('new-desc').value.trim(),img:newPhotoData||urlImg});
-  saveProducts(products); render();
-  ['new-name','new-cat','new-price','new-desc'].forEach(function(i){document.getElementById(i).value='';});
-  document.getElementById('new-stock').value='in';
-  newPhotoData='';
-  var prev=document.getElementById('new-photo-preview'); prev.src=''; prev.classList.remove('visible');
-  switchNewTab('upload');
-  showToast('Product added!');
-}
-function handleBuy(id){document.getElementById('contact').scrollIntoView({behavior:'smooth'});showToast('Scroll down to contact us!');}
-
-// ── CONTACT ───────────────────────────────────────────────
-function applyContact() {
-  var c=loadContact();
-  var em=document.getElementById('display-email'); var ph=document.getElementById('display-phone');
-  em.textContent=c.email; em.href='mailto:'+c.email;
-  ph.textContent=c.phone; ph.href='tel:'+c.phone.replace(/\s/g,'');
-  document.getElementById('edit-email').value=c.email;
-  document.getElementById('edit-phone').value=c.phone;
-}
-function toggleContactEdit() {
-  var form=document.getElementById('contactEditForm');
-  var btn=document.getElementById('contactEditBtn');
-  var btn2=document.getElementById('editContactBtn2');
-  var open=form.classList.toggle('visible');
+};
+window.toggleContactEdit=()=>{
+  const form=document.getElementById('contactEditForm');
+  const btn=document.getElementById('contactEditBtn');
+  const btn2=document.getElementById('editContactBtn2');
+  const open=form.classList.toggle('visible');
   btn.textContent=open?'✦ Cancel':'✦ Edit Contact Info';
   btn2.classList.toggle('active',open);
-  if(open)document.getElementById('contact').scrollIntoView({behavior:'smooth'});
-}
-function saveContact() {
-  var email=document.getElementById('edit-email').value.trim();
-  var phone=document.getElementById('edit-phone').value.trim();
-  if(!email){showToast('Please enter an email.');return;}
-  saveContactData({email:email,phone:phone}); applyContact(); toggleContactEdit(); showToast('Contact info saved!');
-}
+  if(open) document.getElementById('contact').scrollIntoView({behavior:'smooth'});
+};
+window._handleBuy=()=>{
+  document.getElementById('contact').scrollIntoView({behavior:'smooth'});
+  showToast('Scroll down to contact us!');
+};
 
-// ── TOAST ─────────────────────────────────────────────────
-var toastTimer;
-function showToast(msg) {
-  var t=document.getElementById('toast');
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
   t.textContent=msg; t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(function(){t.classList.remove('show');},2800);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
 }
+window.showToast=showToast;
 
-// ── INIT ──────────────────────────────────────────────────
-applyContact();
-var savedAbout=loadAbout();
-if(savedAbout) document.getElementById('about-text').textContent=savedAbout;
-render();
+init();
 </script>
 </body>
 </html>
