@@ -263,6 +263,24 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
 .fgf-label { font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-right:.2rem; }
 .fgf-tag { font-size:.66rem; letter-spacing:.06em; border:1px solid var(--border); color:var(--accent2); padding:.15rem .5rem; border-radius:2px; }
 
+/* MATERIAL EDITOR IN ADMIN PANEL */
+.mat-editor { display:flex; flex-direction:column; gap:.4rem; }
+.mat-editor-label { font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:.1rem; }
+.mat-row { display:flex; align-items:center; gap:.5rem; padding:.35rem .5rem; border:1px solid var(--border); border-radius:2px; background:var(--bg); }
+.mat-row input[type=checkbox] { accent-color:var(--accent); width:14px; height:14px; cursor:pointer; flex-shrink:0; }
+.mat-row-name { font-size:.78rem; flex:1; color:var(--text); }
+.mat-row select { background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Sans',sans-serif; font-size:.72rem; padding:.25rem .4rem; border-radius:2px; width:110px; flex-shrink:0; }
+.mat-row.disabled-mat { opacity:.45; }
+
+/* CUSTOMER MATERIAL STATUS ON CARD */
+.card-mat-list { padding:.5rem 1rem .6rem; display:flex; flex-direction:column; gap:.28rem; border-top:1px solid var(--border); }
+.card-mat-list-label { font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:.15rem; }
+.card-mat-item { display:flex; justify-content:space-between; align-items:center; font-size:.74rem; }
+.card-mat-item span:first-child { color:var(--text); }
+.cmi-in  { color:#6dbf7e; font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; }
+.cmi-low { color:#c07a3a; font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; }
+.cmi-out { color:var(--danger); font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; }
+
 </style>
 </head>
 <body>
@@ -392,6 +410,12 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
         <p style="font-size:.68rem;color:var(--muted);margin-top:.3rem;">Tip: upload your photo to <a href="https://imgur.com" target="_blank" style="color:var(--accent)">imgur.com</a> and paste the link here.</p>
       </div>
     </div>
+    <div class="field full">
+        <label>Materials & availability</label>
+        <div class="mat-editor" id="new-mat-editor">
+          <p style="font-size:.72rem;color:var(--muted);margin-bottom:.4rem;">Check which materials are available for this product and set their stock level.</p>
+        </div>
+      </div>
     <button class="btn-add-submit" onclick="addProduct()">Add Product</button>
   </div>
 </div>
@@ -644,6 +668,21 @@ const FB_READY = FIREBASE_CONFIG.apiKey !== 'PASTE_YOUR_apiKey_HERE';
 let db, productsCol, settingsCol;
 let products = [];
 let siteSettings = { email:'hello@sending3d.no', phone:'+47 000 00 000', about:'We are Sending 3D — a small studio passionate about turning ideas into physical objects. From functional parts to decorative pieces, we work with a range of materials and finishes. Get in touch to discuss your project.', heroEyebrow:'3D Printing — Made to Order', heroLine1:'Printed with', heroLine2:'precision', heroSub:'Custom 3D-printed objects, prototypes, and art pieces — designed and produced with care. Every order shaped from scratch.', shopTitle:'Our Products', contactHeading:'Get in Touch', contactDesc:"Have a custom order, question, or idea? Reach out — we'd love to hear from you.", logoUrl:'' };
+const ALL_MATERIALS = [
+  'PLA',
+  'PETG',
+  'ABS',
+  'TPU',
+  'Silicone Mould (cast)',
+  'PLA Mould Box',
+  'Not sure — advise me'
+];
+
+// Default materials for new products: all enabled, all in stock
+function defaultMaterials() {
+  return Object.fromEntries(ALL_MATERIALS.map(m => [m, 'in']));
+}
+
 let devMode = false, shopEditMode = false, aboutEditing = false;
 
 // Default products shown before Firebase loads
@@ -748,6 +787,73 @@ function applySettings() {
   document.getElementById('edit-shop-title').value = siteSettings.shopTitle||'';
 }
 
+// ── ADMIN MATERIAL EDITOR BUILDER ────────────────────────
+function buildAdminMatEditor(p) {
+  const mats = p.materials || {};
+  return ALL_MATERIALS.map(m => {
+    const st = mats[m] || 'unavailable';
+    const enabled = st !== 'unavailable';
+    const key = m.replace(/[^a-z0-9]/gi,'_');
+    const pid = p.id;
+    const mJson = JSON.stringify(m);
+    const pidJson = JSON.stringify(pid);
+    return '<div class="mat-row '+(enabled?'':'disabled-mat')+'" id="matrow-'+pid+'-'+key+'">'
+      + '<input type="checkbox" '+(enabled?'checked':'')+' onchange="window._toggleMat('+pidJson+','+mJson+',this.checked)">'
+      + '<span class="mat-row-name">'+esc(m)+'</span>'
+      + '<select onchange="window._setMatStock('+pidJson+','+mJson+',this.value)" '+(enabled?'':'disabled')+'>'
+      + '<option value="in"  '+(st==='in'?'selected':'')+'>In Stock</option>'
+      + '<option value="low" '+(st==='low'?'selected':'')+'>Low Stock</option>'
+      + '<option value="out" '+(st==='out'?'selected':'')+'>Out of Stock</option>'
+      + '</select>'
+      + '</div>';
+  }).join('');
+}
+
+// ── MATERIAL CARD HTML BUILDER ───────────────────────────
+function buildCardMatHTML(p) {
+  const mats = p.materials || {};
+  const availMats = ALL_MATERIALS.filter(m => mats[m] && mats[m] !== 'unavailable');
+  if (p.stock === 'out' || !availMats.length) return '';
+
+  const matListItems = availMats.map(m => {
+    const st = mats[m];
+    const cls = st==='low'?'cmi-low':st==='out'?'cmi-out':'cmi-in';
+    const lbl = st==='low'?'Low Stock':st==='out'?'Out of Stock':'In Stock';
+    return '<div class="card-mat-item"><span>'+esc(m)+'</span><span class="'+cls+'">'+lbl+'</span></div>';
+  }).join('');
+
+  const opts = availMats.map(m => {
+    const st = mats[m];
+    const suffix = st==='low' ? ' (Low Stock)' : st==='out' ? ' (Out of Stock)' : '';
+    const dis = st==='out' ? ' disabled' : '';
+    return '<option value="'+esc(m)+'"'+dis+'>'+esc(m)+suffix+'</option>';
+  }).join('');
+
+  const firstAvail = availMats.find(m => mats[m] !== 'out') || availMats[0];
+  const hint = MATERIAL_HINTS[firstAvail] || '';
+  const pidJ = JSON.stringify(p.id);
+
+  return '<div class="card-mat-list">'
+    + '<div class="card-mat-list-label">Available materials</div>'
+    + matListItems
+    + '</div>'
+    + '<div class="card-order-options">'
+    + '<div>'
+    + '<label>Select material</label>'
+    + '<select id="mat-'+p.id+'" onchange="window._updateMaterialHint('+pidJ+',this.value)">'+opts+'</select>'
+    + '<div class="material-hint" id="hint-'+p.id+'">'+hint+'</div>'
+    + '</div>'
+    + '<div>'
+    + '<label>Quantity</label>'
+    + '<div class="qty-row">'
+    + '<button type="button" onclick="window._changeCardQty('+pidJ+',-1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:28px;height:28px;cursor:pointer;border-radius:2px;font-size:.9rem;">−</button>'
+    + '<input type="number" id="qty-'+p.id+'" min="1" max="100" value="1">'
+    + '<button type="button" onclick="window._changeCardQty('+pidJ+',1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:28px;height:28px;cursor:pointer;border-radius:2px;font-size:.9rem;">+</button>'
+    + '</div>'
+    + '</div>'
+    + '</div>';
+}
+
 // ── RENDER ───────────────────────────────────────────────
 function render() {
   const grid = document.getElementById('productsGrid');
@@ -777,29 +883,7 @@ function render() {
             <div class="card-stock ${stockClass}">${stockLabel}</div>
           </div>
         </div>
-        ${p.stock!=='out'?`<div class="card-order-options">
-          <div>
-            <label>Material</label>
-            <select id="mat-${p.id}" onchange="window._updateMaterialHint('${p.id}',this.value)">
-              <option value="PLA">PLA — Standard &amp; affordable</option>
-              <option value="PETG">PETG — Tough &amp; heat resistant</option>
-              <option value="ABS">ABS — High impact &amp; heat</option>
-              <option value="TPU">TPU — Flexible / rubber-like</option>
-              <option value="Silicone Mould (cast)">Silicone Mould — cast by us</option>
-              <option value="PLA Mould Box">PLA Mould Box — DIY casting</option>
-              <option value="Not sure">Not sure — advise me</option>
-            </select>
-            <div class="material-hint" id="hint-${p.id}">Great for most prints. Biodegradable and low cost.</div>
-          </div>
-          <div>
-            <label>Quantity</label>
-            <div class="qty-row">
-              <button type="button" onclick="window._changeCardQty('${p.id}',-1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:28px;height:28px;cursor:pointer;border-radius:2px;font-size:.9rem;">−</button>
-              <input type="number" id="qty-${p.id}" min="1" max="100" value="1">
-              <button type="button" onclick="window._changeCardQty('${p.id}',1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:28px;height:28px;cursor:pointer;border-radius:2px;font-size:.9rem;">+</button>
-            </div>
-          </div>
-        </div>`:''}
+        ${buildCardMatHTML(p)}
         <button class="btn-buy" ${p.stock==='out'?'disabled style="opacity:.4;cursor:not-allowed"':''} onclick="window._handleBuy('${p.id}')">
           ${p.stock==='out'?'Sold Out':'Order Now'}
         </button>
@@ -823,6 +907,12 @@ function render() {
             </div>
           </div>
           <div><label>Description</label><textarea rows="2" oninput="window._pendingUpdate('${p.id}','desc',this.value)">${esc(p.desc)}</textarea></div>
+          <div>
+            <div class="mat-editor-label">Materials & availability</div>
+            <div class="mat-editor" id="mateditor-${p.id}">
+              ${buildAdminMatEditor(p)}
+            </div>
+          </div>
           <div class="admin-actions">
             <button class="btn-save" onclick="window._saveCard('${p.id}')">Save Changes</button>
             <button class="btn-delete" onclick="window._deleteProduct('${p.id}')">Delete</button>
@@ -839,10 +929,76 @@ function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;
 const pending = {};
 window._pendingUpdate = (id,field,value) => { if(!pending[id])pending[id]={}; pending[id][field]=value; };
 
+// Per-product material state (live edits before save)
+const pendingMats = {};
+function getMats(id) {
+  const p = products.find(pr=>pr.id===id);
+  const base = (p && p.materials) ? {...p.materials} : {};
+  return {...base, ...(pendingMats[id]||{})};
+}
+window._toggleMat = (id, mat, enabled) => {
+  if (!pendingMats[id]) pendingMats[id] = getMats(id);
+  pendingMats[id][mat] = enabled ? 'in' : 'unavailable';
+  // Update row UI
+  const key = mat.replace(/[^a-z0-9]/gi,'_');
+  const row = document.getElementById('matrow-'+id+'-'+key);
+  if (row) {
+    row.classList.toggle('disabled-mat', !enabled);
+    const sel = row.querySelector('select');
+    if (sel) sel.disabled = !enabled;
+  }
+};
+window._setMatStock = (id, mat, val) => {
+  if (!pendingMats[id]) pendingMats[id] = getMats(id);
+  pendingMats[id][mat] = val;
+};
+
+// Render new-product material editor
+function renderNewMatEditor() {
+  const el = document.getElementById('new-mat-editor');
+  if (!el) return;
+  el.innerHTML = '<p style="font-size:.72rem;color:var(--muted);margin-bottom:.4rem;">Check which materials are available for this product and set their stock level.</p>'
+    + ALL_MATERIALS.map(m => {
+      const key = m.replace(/[^a-z0-9]/gi,'_');
+      const mJson = JSON.stringify(m);
+      return '<div class="mat-row disabled-mat" id="newmatrow-'+key+'">'
+        + '<input type="checkbox" id="newmat-cb-'+key+'" onchange="window._toggleNewMat('+mJson+',this.checked)">'
+        + '<span class="mat-row-name">'+m+'</span>'
+        + '<select id="newmat-st-'+key+'" disabled>'
+        + '<option value="in">In Stock</option>'
+        + '<option value="low">Low Stock</option>'
+        + '<option value="out">Out of Stock</option>'
+        + '</select>'
+        + '</div>';
+    }).join('');
+}
+window._toggleNewMat = (mat, enabled) => {
+  const key = mat.replace(/[^a-z0-9]/gi,'_');
+  const row = document.getElementById('newmatrow-'+key);
+  if (row) {
+    row.classList.toggle('disabled-mat', !enabled);
+    const sel = row.querySelector('select');
+    if (sel) sel.disabled = !enabled;
+  }
+};
+function getNewMats() {
+  const result = {};
+  ALL_MATERIALS.forEach(m => {
+    const key = m.replace(/[^a-z0-9]/gi,'_');
+    const cb = document.getElementById('newmat-cb-'+key);
+    const sel = document.getElementById('newmat-st-'+key);
+    if (cb && cb.checked) result[m] = sel ? sel.value : 'in';
+    else result[m] = 'unavailable';
+  });
+  return result;
+}
+
 window._saveCard = async (id) => {
-  if (!pending[id]) { showToast('No changes to save.'); return; }
-  const updates = { ...pending[id] };
+  const hasPending = pending[id] || pendingMats[id];
+  if (!hasPending) { showToast('No changes to save.'); return; }
+  const updates = { ...(pending[id]||{}) };
   if (updates.price) updates.price = Number(updates.price);
+  if (pendingMats[id]) { updates.materials = getMats(id); delete pendingMats[id]; }
   delete pending[id];
   if (FB_READY && db) {
     try { await setDoc(doc(db,'products',id), updates, {merge:true}); showToast('Saved to cloud ✓'); }
@@ -872,6 +1028,7 @@ window.addProduct = async () => {
     stock: document.getElementById('new-stock').value,
     desc: document.getElementById('new-desc').value.trim(),
     img: document.getElementById('new-img-url').value.trim(),
+    materials: getNewMats(),
     order: products.length + 1
   };
   if (FB_READY && db) {
@@ -883,6 +1040,7 @@ window.addProduct = async () => {
   }
   ['new-name','new-cat','new-price','new-desc','new-img-url'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('new-stock').value='in';
+  renderNewMatEditor();
 };
 
 // ── CONTACT SAVE ─────────────────────────────────────────
@@ -994,7 +1152,7 @@ window.toggleShopEdit=()=>{
   document.getElementById('editShopBtn').classList.toggle('active',shopEditMode);
   document.getElementById('addSection').classList.toggle('visible',shopEditMode);
   document.querySelectorAll('.admin-panel').forEach(p=>p.classList.toggle('visible',shopEditMode));
-  if(shopEditMode) document.getElementById('shop').scrollIntoView({behavior:'smooth'});
+  if(shopEditMode){ document.getElementById('shop').scrollIntoView({behavior:'smooth'}); renderNewMatEditor(); }
 };
 window.toggleAboutEdit=()=>{
   aboutEditing=!aboutEditing;
@@ -1060,6 +1218,8 @@ window._handleBuy = (id) => {
   document.getElementById('order-qty').value = orderState.qty;
   // Jump to order page step 1
   goToOrderStep(1);
+  // Pre-update material availability for this product when they reach step 2
+  orderState._pendingMatUpdate = true;
   document.getElementById('order').scrollIntoView({behavior:'smooth'});
   showToast('Fill in your details below ✦');
 };
@@ -1134,11 +1294,39 @@ window.selectMaterial = (name) => {
   });
 };
 
+// Update material cards in step 2 based on selected product's material availability
+function updateOrderMaterialCards() {
+  const p = products.find(pr => pr.id === orderState.productId);
+  const mats = (p && p.materials) ? p.materials : {};
+  document.querySelectorAll('.material-card').forEach(card => {
+    const name = card.querySelector('.mc-name').textContent;
+    const st = mats[name] || 'unavailable';
+    const isUnavail = st === 'unavailable';
+    const isOut = st === 'out';
+    card.style.opacity = (isUnavail || isOut) ? '0.35' : '1';
+    card.style.pointerEvents = (isUnavail || isOut) ? 'none' : '';
+    card.style.cursor = (isUnavail || isOut) ? 'not-allowed' : '';
+    // Show/hide stock badge
+    let badge = card.querySelector('.mc-stock-badge');
+    if (!badge) {
+      badge = document.createElement('div');
+      badge.className = 'mc-stock-badge';
+      badge.style.cssText = 'font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;margin-top:.4rem;';
+      card.appendChild(badge);
+    }
+    if (isUnavail) { badge.textContent = 'Not available for this product'; badge.style.color = 'var(--muted)'; }
+    else if (isOut) { badge.textContent = 'Out of stock'; badge.style.color = 'var(--danger)'; }
+    else if (st === 'low') { badge.textContent = 'Low stock'; badge.style.color = '#c07a3a'; }
+    else { badge.textContent = ''; }
+  });
+}
+
 window.orderNext = (fromStep) => {
   if (fromStep === 1) {
     if (!orderState.productId) { showToast('Please select a product first.'); return; }
     orderState.qty = parseInt(document.getElementById('order-qty').value)||1;
     goToOrderStep(2);
+    updateOrderMaterialCards();
   } else if (fromStep === 2) {
     if (!orderState.material) { showToast('Please choose a material.'); return; }
     goToOrderStep(3);
