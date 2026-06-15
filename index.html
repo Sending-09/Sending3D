@@ -247,6 +247,22 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
 .order-success p { color:var(--muted); font-size:.9rem; line-height:1.7; max-width:420px; margin:0 auto 1.5rem; }
 .order-form-wrap { display:block; }
 
+/* FILE GUIDE */
+.file-guide-box { border:1px solid var(--border); border-radius:3px; padding:1.1rem 1.2rem; background:var(--surface); }
+.file-guide-intro { font-size:.8rem; color:var(--muted); margin-bottom:1rem; line-height:1.6; }
+.file-guide-options { display:flex; flex-direction:column; gap:.9rem; }
+.file-guide-option { display:flex; gap:.9rem; align-items:flex-start; }
+.fgo-num { width:24px; height:24px; min-width:24px; border-radius:50%; border:1px solid var(--accent2); color:var(--accent); font-size:.7rem; display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:.85rem; margin-top:.1rem; }
+.fgo-body { flex:1; }
+.fgo-title { font-size:.82rem; font-weight:500; margin-bottom:.25rem; color:var(--text); }
+.fgo-desc { font-size:.76rem; color:var(--muted); line-height:1.6; }
+.fgo-email { color:var(--accent); font-weight:400; }
+.fgo-btn { margin-top:.5rem; background:none; border:1px solid var(--border); color:var(--muted); font-family:'DM Sans',sans-serif; font-size:.67rem; letter-spacing:.08em; text-transform:uppercase; padding:.32rem .75rem; cursor:pointer; border-radius:2px; transition:all .2s; }
+.fgo-btn:hover { border-color:var(--accent); color:var(--accent); }
+.file-guide-formats { display:flex; align-items:center; flex-wrap:wrap; gap:.4rem; margin-top:1rem; padding-top:.8rem; border-top:1px solid var(--border); }
+.fgf-label { font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-right:.2rem; }
+.fgf-tag { font-size:.66rem; letter-spacing:.06em; border:1px solid var(--border); color:var(--accent2); padding:.15rem .5rem; border-radius:2px; }
+
 </style>
 </head>
 <body>
@@ -446,10 +462,15 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
           <div class="mc-desc">Flexible rubber-like material. Ideal for phone cases, gaskets, grips, and anything that needs to flex.</div>
           <div class="mc-props"><span class="mc-tag">Flexible</span><span class="mc-tag">Impact absorbing</span><span class="mc-tag">Waterproof</span></div>
         </div>
-        <div class="material-card" onclick="selectMaterial('Resin (SLA)','Ultra-high detail for miniatures, jewellery, and dental/medical models. Smooth surface finish straight off the printer.')">
-          <div class="mc-name">Resin (SLA)</div>
-          <div class="mc-desc">Ultra-high detail for miniatures, jewellery, and art pieces. Smooth surface finish straight off the printer.</div>
-          <div class="mc-props"><span class="mc-tag">Highest detail</span><span class="mc-tag">Smooth finish</span><span class="mc-tag">Brittle</span></div>
+        <div class="material-card" onclick="selectMaterial('Silicone Mould (cast)','We print a PLA positive/master model, then cast a silicone mould around it. Great for duplicating parts, making flexible casts, soap, candles, or small-batch production.')">
+          <div class="mc-name">Silicone Mould</div>
+          <div class="mc-desc">We print a master model, then cast a silicone mould around it. Perfect for duplicating parts, candles, soap, resin casting, or small-batch production.</div>
+          <div class="mc-props"><span class="mc-tag">Flexible mould</span><span class="mc-tag">Reusable</span><span class="mc-tag">Small-batch</span></div>
+        </div>
+        <div class="material-card" onclick="selectMaterial('PLA Mould Box','A rigid PLA mould box printed to your dimensions — used as a form to pour silicone or resin into. You do the casting yourself.')">
+          <div class="mc-name">PLA Mould Box</div>
+          <div class="mc-desc">A rigid PLA-printed mould box to your dimensions — pour your own silicone or resin into it. You handle the casting; we handle the box.</div>
+          <div class="mc-props"><span class="mc-tag">DIY casting</span><span class="mc-tag">Custom dims</span><span class="mc-tag">PLA shell</span></div>
         </div>
         <div class="material-card" onclick="selectMaterial('Not sure — advise me','Let us recommend the best material based on your use case. Describe your needs in step 3.')">
           <div class="mc-name">Not sure — advise me</div>
@@ -472,7 +493,57 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
         <div class="order-field"><label>Phone number</label><input id="o-phone" type="tel" placeholder="+47 000 00 000"></div>
         <div class="order-field"><label>Delivery address</label><input id="o-address" placeholder="Street, City, Postcode"></div>
         <div class="order-field"><label>Preferred colour / finish</label><input id="o-colour" placeholder="e.g. Matte black, White, Custom"></div>
-        <div class="order-field full"><label>Notes / special requirements</label><textarea id="o-notes" rows="3" placeholder="Any special dimensions, file uploads needed, use case description, deadlines…"></textarea></div>
+        <div class="order-field full">
+          <label>Notes / special requirements</label>
+          <textarea id="o-notes" rows="3" placeholder="Dimensions, deadlines, colour preferences, use case details…"></textarea>
+        </div>
+
+        <!-- FILE INSTRUCTIONS -->
+        <div class="order-field full">
+          <label>Design file</label>
+          <div class="file-guide-box">
+            <p class="file-guide-intro">If you have a 3D file or reference, send it to us after ordering. Here's the easiest way:</p>
+            <div class="file-guide-options">
+
+              <div class="file-guide-option">
+                <div class="fgo-num">1</div>
+                <div class="fgo-body">
+                  <div class="fgo-title">Email us the file</div>
+                  <div class="fgo-desc">After submitting, send your file directly to <span id="file-guide-email" class="fgo-email">hello@sending3d.no</span>. Use your order name as the subject line.</div>
+                  <button class="fgo-btn" onclick="copyFileEmail()">Copy email address</button>
+                </div>
+              </div>
+
+              <div class="file-guide-option">
+                <div class="fgo-num">2</div>
+                <div class="fgo-body">
+                  <div class="fgo-title">Share via Google Drive / Dropbox / WeTransfer</div>
+                  <div class="fgo-desc">Upload your file to any cloud service, paste a share link in the field below, and we'll download it.</div>
+                  <input id="o-filelink" type="url" placeholder="https://drive.google.com/… or wetransfer.com/…" style="margin-top:.5rem;width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.84rem;padding:.48rem .65rem;border-radius:2px;">
+                </div>
+              </div>
+
+              <div class="file-guide-option">
+                <div class="fgo-num">3</div>
+                <div class="fgo-body">
+                  <div class="fgo-title">No file yet? Describe it instead</div>
+                  <div class="fgo-desc">Use the notes field above. Include dimensions (mm), what it's for, and any references. We'll get back to you to confirm before printing.</div>
+                </div>
+              </div>
+
+            </div>
+            <div class="file-guide-formats">
+              <span class="fgf-label">Accepted formats</span>
+              <span class="fgf-tag">.STL</span>
+              <span class="fgf-tag">.OBJ</span>
+              <span class="fgf-tag">.STEP</span>
+              <span class="fgf-tag">.3MF</span>
+              <span class="fgf-tag">.F3D</span>
+              <span class="fgf-tag">Images / sketches</span>
+            </div>
+          </div>
+        </div>
+
       </div>
       <div class="order-nav-btns">
         <button class="btn-order-back" onclick="orderBack(3)">← Back</button>
@@ -493,6 +564,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
         <div class="osb-row"><span>Phone</span><span id="rev-phone">—</span></div>
         <div class="osb-row"><span>Address</span><span id="rev-address">—</span></div>
         <div class="osb-row"><span>Notes</span><span id="rev-notes" style="max-width:60%;text-align:right;">—</span></div>
+        <div class="osb-row" id="rev-filelink-row" style="display:none;"><span>File link</span><span id="rev-filelink" style="max-width:60%;text-align:right;word-break:break-all;font-size:.75rem;">—</span></div>
         <div class="osb-row osb-total"><span>Estimated price</span><span id="rev-price">—</span></div>
       </div>
       <p style="font-size:.78rem;color:var(--muted);margin-bottom:1.2rem;line-height:1.6;">By submitting you agree to be contacted to confirm details and arrange payment. No charge is made until you approve the final quote.</p>
@@ -578,7 +650,7 @@ let devMode = false, shopEditMode = false, aboutEditing = false;
 const defaultProducts = [
   { id:'1', name:'Cable Management Clip', category:'Functional', price:89, stock:'in', desc:'Stackable cable clip for desk or wall. Prints in PLA, matte black finish.', img:'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=600&q=80', order:1 },
   { id:'2', name:'Custom Nameplate', category:'Decorative', price:149, stock:'in', desc:'Personalised name or text plate in any font. Great for desks and doors.', img:'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80', order:2 },
-  { id:'3', name:'Miniature Figurine', category:'Art', price:249, stock:'low', desc:'High-detail resin miniature printed at 0.05mm layer height.', img:'https://images.unsplash.com/photo-1608501078713-8e445a709b39?w=600&q=80', order:3 },
+  { id:'3', name:'Miniature Figurine', category:'Art', price:249, stock:'low', desc:'High-detail miniature printed at 0.05mm layer height in PLA or with silicone mould casting.', img:'https://images.unsplash.com/photo-1608501078713-8e445a709b39?w=600&q=80', order:3 },
   { id:'4', name:'Prototype Enclosure', category:'Engineering', price:399, stock:'in', desc:"Custom-dimensioned project box. Send us your measurements and we'll print it.", img:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80', order:4 },
 ];
 
@@ -665,6 +737,9 @@ function applySettings() {
   }
   if (siteSettings.heroSub) document.getElementById('hero-sub').textContent = siteSettings.heroSub;
   if (siteSettings.shopTitle) document.getElementById('shop-section-title').textContent = siteSettings.shopTitle;
+  // Update email in file guide
+  const fge = document.getElementById('file-guide-email');
+  if (fge) fge.textContent = siteSettings.email || 'hello@sending3d.no';
   // Populate hero edit fields
   document.getElementById('edit-hero-eyebrow').value = siteSettings.heroEyebrow||'';
   document.getElementById('edit-hero-line1').value = siteSettings.heroLine1||'';
@@ -710,7 +785,8 @@ function render() {
               <option value="PETG">PETG — Tough &amp; heat resistant</option>
               <option value="ABS">ABS — High impact &amp; heat</option>
               <option value="TPU">TPU — Flexible / rubber-like</option>
-              <option value="Resin (SLA)">Resin (SLA) — Ultra-high detail</option>
+              <option value="Silicone Mould (cast)">Silicone Mould — cast by us</option>
+              <option value="PLA Mould Box">PLA Mould Box — DIY casting</option>
               <option value="Not sure">Not sure — advise me</option>
             </select>
             <div class="material-hint" id="hint-${p.id}">Great for most prints. Biodegradable and low cost.</div>
@@ -947,7 +1023,8 @@ const MATERIAL_HINTS = {
   'PETG': 'Tough and heat resistant. Good for functional parts that see daily use.',
   'ABS': 'High heat and impact resistance. Ideal for engineering prototypes.',
   'TPU': 'Flexible rubber-like material. Perfect for grips, cases and gaskets.',
-  'Resin (SLA)': 'Ultra-high detail and smooth finish. Best for art and miniatures.',
+  'Silicone Mould (cast)': 'We print the master, cast the silicone mould. Great for duplicating parts or small-batch production.',
+  'PLA Mould Box': 'A rigid printed box for your own silicone or resin pour. You handle the casting.',
   'Not sure': "No problem — describe your use case in step 3 and we'll advise you."
 };
 window._updateMaterialHint = (id, val) => {
@@ -1038,6 +1115,13 @@ function goToOrderStep(n) {
   orderState.step = n;
 }
 
+window.copyFileEmail = () => {
+  const email = siteSettings.email || 'hello@sending3d.no';
+  navigator.clipboard.writeText(email).then(() => showToast('Email copied: ' + email)).catch(() => {
+    showToast(email);
+  });
+};
+
 window.changeQty = (delta) => {
   const input = document.getElementById('order-qty');
   input.value = Math.max(1, Math.min(100, (parseInt(input.value)||1) + delta));
@@ -1074,6 +1158,10 @@ window.orderNext = (fromStep) => {
     document.getElementById('rev-phone').textContent = document.getElementById('o-phone').value||'—';
     document.getElementById('rev-address').textContent = document.getElementById('o-address').value||'—';
     document.getElementById('rev-notes').textContent = document.getElementById('o-notes').value||'—';
+    const fl = document.getElementById('o-filelink');
+    const flRow = document.getElementById('rev-filelink-row');
+    if (fl && flRow) flRow.style.display = fl.value ? '' : 'none';
+    if (fl && document.getElementById('rev-filelink')) document.getElementById('rev-filelink').textContent = fl.value || '—';
     document.getElementById('rev-price').textContent = 'kr ' + (Number(orderState.productPrice) * orderState.qty).toLocaleString('no-NO') + ' (estimated)';
     goToOrderStep(4);
   }
@@ -1101,6 +1189,7 @@ window.submitOrder = async () => {
     phone: document.getElementById('o-phone').value.trim(),
     address: document.getElementById('o-address').value.trim(),
     notes: document.getElementById('o-notes').value.trim(),
+    fileLink: document.getElementById('o-filelink') ? document.getElementById('o-filelink').value.trim() : '',
     estimatedPrice: Number(orderState.productPrice) * orderState.qty,
     status: 'new',
     createdAt: new Date().toISOString()
@@ -1125,7 +1214,7 @@ window.submitOrder = async () => {
 
 window.resetOrder = () => {
   orderState = { step:1, productId:null, productName:'', productPrice:0, material:'', qty:1 };
-  ['o-fname','o-lname','o-email','o-phone','o-address','o-colour','o-notes'].forEach(id => {
+  ['o-fname','o-lname','o-email','o-phone','o-address','o-colour','o-notes','o-filelink'].forEach(id => {
     const el = document.getElementById(id); if(el) el.value='';
   });
   document.getElementById('order-qty').value = 1;
