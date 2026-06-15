@@ -232,16 +232,46 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
 <!-- DEV TOOLBAR -->
 <div id="devToolbar">
   <span class="dev-label">✦ Dev</span>
+  <button class="dev-btn" id="editHeroBtn" onclick="toggleHeroEdit()">Edit Hero</button>
   <button class="dev-btn" id="editShopBtn" onclick="toggleShopEdit()">Edit Shop</button>
   <button class="dev-btn" id="editAboutBtn" onclick="toggleAboutEdit()">Edit About</button>
   <button class="dev-btn" id="editContactBtn2" onclick="toggleContactEdit()">Edit Contact</button>
   <button class="dev-btn dev-exit" onclick="exitDev()">Exit</button>
 </div>
 
+<!-- HERO EDIT PANEL -->
+<div id="heroEditPanel" style="display:none;background:#0f0f0f;border-bottom:1px solid var(--border);padding:1.2rem var(--pad);flex-direction:column;gap:.9rem;">
+  <div style="font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:.1rem;">&#10022; Edit Hero Section</div>
+  <div style="max-width:480px;">
+    <label style="font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.28rem;">Eyebrow Text</label>
+    <input id="edit-hero-eyebrow" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;padding:.55rem .75rem;border-radius:2px;" placeholder="e.g. 3D Printing — Made to Order">
+  </div>
+  <div style="max-width:480px;">
+    <label style="font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.28rem;">Title Line 1</label>
+    <input id="edit-hero-line1" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;padding:.55rem .75rem;border-radius:2px;" placeholder="e.g. Printed with">
+  </div>
+  <div style="max-width:480px;">
+    <label style="font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.28rem;">Title Line 2 (shown in gold italic)</label>
+    <input id="edit-hero-line2" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;padding:.55rem .75rem;border-radius:2px;" placeholder="e.g. precision">
+  </div>
+  <div style="max-width:480px;">
+    <label style="font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.28rem;">Subtitle</label>
+    <textarea id="edit-hero-sub" rows="3" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;padding:.55rem .75rem;border-radius:2px;resize:vertical;"></textarea>
+  </div>
+  <div style="max-width:480px;">
+    <label style="font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.28rem;">Shop Section Title</label>
+    <input id="edit-shop-title" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;padding:.55rem .75rem;border-radius:2px;" placeholder="e.g. Our Products">
+  </div>
+  <div style="display:flex;gap:.6rem;margin-top:.2rem;">
+    <button class="btn-save" style="max-width:180px;" onclick="saveHero()">Save to Cloud</button>
+    <button class="dev-btn" onclick="toggleHeroEdit()">Cancel</button>
+  </div>
+</div>
+
 <!-- HERO -->
 <section id="home">
-  <p class="hero-eyebrow">3D Printing — Made to Order</p>
-  <h1 id="hero-title">Printed with<br><em>precision</em></h1>
+  <p class="hero-eyebrow" id="hero-eyebrow">3D Printing — Made to Order</p>
+  <h1 id="hero-title">Printed with<br><em id="hero-line2">precision</em></h1>
   <p id="hero-sub">Custom 3D-printed objects, prototypes, and art pieces — designed and produced with care. Every order shaped from scratch.</p>
 </section>
 <hr class="divider">
@@ -256,7 +286,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
 
 <!-- SHOP -->
 <div id="shop">
-  <div class="section-header"><h2>Our Products</h2></div>
+  <div class="section-header"><h2 id="shop-section-title">Our Products</h2></div>
   <div class="spinner" id="loadingSpinner">Loading products…</div>
   <div class="products-grid" id="productsGrid"></div>
   <div class="add-product-section" id="addSection">
@@ -344,7 +374,7 @@ const FB_READY = FIREBASE_CONFIG.apiKey !== 'PASTE_YOUR_apiKey_HERE';
 
 let db, productsCol, settingsCol;
 let products = [];
-let siteSettings = { email:'hello@sending3d.no', phone:'+47 000 00 000', about:'We are Sending 3D — a small studio passionate about turning ideas into physical objects. From functional parts to decorative pieces, we work with a range of materials and finishes. Get in touch to discuss your project.' };
+let siteSettings = { email:'hello@sending3d.no', phone:'+47 000 00 000', about:'We are Sending 3D — a small studio passionate about turning ideas into physical objects. From functional parts to decorative pieces, we work with a range of materials and finishes. Get in touch to discuss your project.', heroEyebrow:'3D Printing — Made to Order', heroLine1:'Printed with', heroLine2:'precision', heroSub:'Custom 3D-printed objects, prototypes, and art pieces — designed and produced with care. Every order shaped from scratch.', shopTitle:'Our Products' };
 let devMode = false, shopEditMode = false, aboutEditing = false;
 
 // Default products shown before Firebase loads
@@ -382,6 +412,8 @@ async function init() {
     // Load settings
     const settingsSnap = await getDocs(settingsCol);
     settingsSnap.forEach(d => { Object.assign(siteSettings, d.data()); });
+    // Also listen for hero/settings changes live
+    onSnapshot(settingsCol, (snap) => { snap.forEach(d => { Object.assign(siteSettings, d.data()); }); applySettings(); });
     applySettings();
 
     // Seed default products if DB is empty
@@ -410,6 +442,20 @@ function applySettings() {
   document.getElementById('edit-email').value = siteSettings.email;
   document.getElementById('edit-phone').value = siteSettings.phone;
   if (siteSettings.about) document.getElementById('about-text').textContent = siteSettings.about;
+  // Hero
+  if (siteSettings.heroEyebrow) document.getElementById('hero-eyebrow').textContent = siteSettings.heroEyebrow;
+  if (siteSettings.heroLine1 || siteSettings.heroLine2) {
+    const t = document.getElementById('hero-title');
+    t.innerHTML = esc(siteSettings.heroLine1||'') + (siteSettings.heroLine2 ? '<br><em id="hero-line2">' + esc(siteSettings.heroLine2) + '</em>' : '');
+  }
+  if (siteSettings.heroSub) document.getElementById('hero-sub').textContent = siteSettings.heroSub;
+  if (siteSettings.shopTitle) document.getElementById('shop-section-title').textContent = siteSettings.shopTitle;
+  // Populate hero edit fields
+  document.getElementById('edit-hero-eyebrow').value = siteSettings.heroEyebrow||'';
+  document.getElementById('edit-hero-line1').value = siteSettings.heroLine1||'';
+  document.getElementById('edit-hero-line2').value = siteSettings.heroLine2||'';
+  document.getElementById('edit-hero-sub').value = siteSettings.heroSub||'';
+  document.getElementById('edit-shop-title').value = siteSettings.shopTitle||'';
 }
 
 // ── RENDER ───────────────────────────────────────────────
@@ -547,6 +593,32 @@ async function saveAbout(text) {
   } else { showToast('Saved (offline)'); }
 }
 
+// ── HERO SAVE ──────────────────────────────────────────────
+window.saveHero = async () => {
+  const heroEyebrow = document.getElementById('edit-hero-eyebrow').value.trim();
+  const heroLine1   = document.getElementById('edit-hero-line1').value.trim();
+  const heroLine2   = document.getElementById('edit-hero-line2').value.trim();
+  const heroSub     = document.getElementById('edit-hero-sub').value.trim();
+  const shopTitle   = document.getElementById('edit-shop-title').value.trim();
+  Object.assign(siteSettings, { heroEyebrow, heroLine1, heroLine2, heroSub, shopTitle });
+  applySettings();
+  if (FB_READY && db) {
+    try {
+      await setDoc(doc(db,'settings','hero'), { heroEyebrow, heroLine1, heroLine2, heroSub, shopTitle }, {merge:true});
+      showToast('Hero saved to cloud ✓');
+    } catch(e) { showToast('Save failed: ' + e.message); }
+  } else { showToast('Saved (offline)'); }
+};
+
+let heroEditing = false;
+window.toggleHeroEdit = () => {
+  heroEditing = !heroEditing;
+  const panel = document.getElementById('heroEditPanel');
+  panel.style.display = heroEditing ? 'flex' : 'none';
+  document.getElementById('editHeroBtn').classList.toggle('active', heroEditing);
+  if (heroEditing) document.getElementById('home').scrollIntoView({behavior:'smooth'});
+};
+
 // ── DEV / NAV / UI (exposed to global scope) ─────────────
 let menuOpen=false;
 window.toggleMenu = () => {
@@ -590,6 +662,7 @@ function enterDev(){
 }
 window.exitDev=()=>{
   devMode=false;
+  if(heroEditing)window.toggleHeroEdit();
   if(shopEditMode)window.toggleShopEdit();
   if(aboutEditing)window.toggleAboutEdit();
   document.getElementById('devToolbar').classList.remove('visible');
