@@ -217,7 +217,10 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
 
 <!-- NAV -->
 <nav>
-  <div class="logo" id="logoBtn">Sending 3D</div>
+  <div class="logo" id="logoBtn">
+    <img id="nav-logo-img" src="" alt="Sending 3D" style="display:none;height:36px;width:auto;object-fit:contain;vertical-align:middle;">
+    <span id="nav-logo-text">Sending 3D</span>
+  </div>
   <ul class="nav-links">
     <li><a onclick="navTo('home')">Home</a></li>
     <li><a onclick="navTo('about')">About</a></li>
@@ -318,8 +321,8 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
 <!-- CONTACT -->
 <section id="contact">
   <div class="contact-left">
-    <h2>Get in Touch</h2>
-    <p>Have a custom order, question, or idea? Reach out — we'd love to hear from you.</p>
+    <h2 id="contact-heading">Get in Touch</h2>
+    <p id="contact-desc">Have a custom order, question, or idea? Reach out — we'd love to hear from you.</p>
   </div>
   <div class="contact-details">
     <div class="contact-item">
@@ -332,10 +335,17 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
     </div>
     <button class="edit-contact-btn" id="contactEditBtn" onclick="toggleContactEdit()">✦ Edit Contact Info</button>
     <div class="contact-edit-form" id="contactEditForm">
+      <label>Section heading</label>
+      <input id="edit-contact-heading" type="text" placeholder="Get in Touch">
+      <label>Description text</label>
+      <textarea id="edit-contact-desc" rows="3" style="background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;padding:.55rem .75rem;border-radius:2px;width:100%;resize:vertical;"></textarea>
       <label>Email address</label>
       <input id="edit-email" type="email" placeholder="your@email.com">
       <label>Phone number</label>
       <input id="edit-phone" type="tel" placeholder="+47 000 00 000">
+      <label>Logo image URL (leave blank to show text logo)</label>
+      <input id="edit-logo-url" type="url" placeholder="https://i.imgur.com/yourlogo.png">
+      <p style="font-size:.66rem;color:var(--muted);margin-top:-.4rem;">Upload to <a href="https://imgur.com" target="_blank" style="color:var(--accent)">imgur.com</a> and paste the link. Recommended: transparent PNG, height ~36px.</p>
       <button class="btn-save-contact" onclick="saveContact()">Save</button>
     </div>
   </div>
@@ -374,7 +384,7 @@ const FB_READY = FIREBASE_CONFIG.apiKey !== 'PASTE_YOUR_apiKey_HERE';
 
 let db, productsCol, settingsCol;
 let products = [];
-let siteSettings = { email:'hello@sending3d.no', phone:'+47 000 00 000', about:'We are Sending 3D — a small studio passionate about turning ideas into physical objects. From functional parts to decorative pieces, we work with a range of materials and finishes. Get in touch to discuss your project.', heroEyebrow:'3D Printing — Made to Order', heroLine1:'Printed with', heroLine2:'precision', heroSub:'Custom 3D-printed objects, prototypes, and art pieces — designed and produced with care. Every order shaped from scratch.', shopTitle:'Our Products' };
+let siteSettings = { email:'hello@sending3d.no', phone:'+47 000 00 000', about:'We are Sending 3D — a small studio passionate about turning ideas into physical objects. From functional parts to decorative pieces, we work with a range of materials and finishes. Get in touch to discuss your project.', heroEyebrow:'3D Printing — Made to Order', heroLine1:'Printed with', heroLine2:'precision', heroSub:'Custom 3D-printed objects, prototypes, and art pieces — designed and produced with care. Every order shaped from scratch.', shopTitle:'Our Products', contactHeading:'Get in Touch', contactDesc:"Have a custom order, question, or idea? Reach out — we'd love to hear from you.", logoUrl:'' };
 let devMode = false, shopEditMode = false, aboutEditing = false;
 
 // Default products shown before Firebase loads
@@ -441,6 +451,23 @@ function applySettings() {
   ph.textContent = siteSettings.phone; ph.href = 'tel:'+siteSettings.phone.replace(/\s/g,'');
   document.getElementById('edit-email').value = siteSettings.email;
   document.getElementById('edit-phone').value = siteSettings.phone;
+  // Contact heading + desc
+  if (siteSettings.contactHeading) document.getElementById('contact-heading').textContent = siteSettings.contactHeading;
+  if (siteSettings.contactDesc) document.getElementById('contact-desc').textContent = siteSettings.contactDesc;
+  document.getElementById('edit-contact-heading').value = siteSettings.contactHeading||'';
+  document.getElementById('edit-contact-desc').value = siteSettings.contactDesc||'';
+  // Logo
+  document.getElementById('edit-logo-url').value = siteSettings.logoUrl||'';
+  const logoImg = document.getElementById('nav-logo-img');
+  const logoText = document.getElementById('nav-logo-text');
+  if (siteSettings.logoUrl) {
+    logoImg.src = siteSettings.logoUrl;
+    logoImg.style.display = 'inline-block';
+    logoText.style.display = 'none';
+  } else {
+    logoImg.style.display = 'none';
+    logoText.style.display = 'inline';
+  }
   if (siteSettings.about) document.getElementById('about-text').textContent = siteSettings.about;
   // Hero
   if (siteSettings.heroEyebrow) document.getElementById('hero-eyebrow').textContent = siteSettings.heroEyebrow;
@@ -575,11 +602,14 @@ window.addProduct = async () => {
 window.saveContact = async () => {
   const email = document.getElementById('edit-email').value.trim();
   const phone = document.getElementById('edit-phone').value.trim();
+  const contactHeading = document.getElementById('edit-contact-heading').value.trim();
+  const contactDesc = document.getElementById('edit-contact-desc').value.trim();
+  const logoUrl = document.getElementById('edit-logo-url').value.trim();
   if (!email) { showToast('Please enter an email.'); return; }
-  siteSettings.email = email; siteSettings.phone = phone;
+  Object.assign(siteSettings, { email, phone, contactHeading, contactDesc, logoUrl });
   applySettings(); toggleContactEdit();
   if (FB_READY && db) {
-    try { await setDoc(doc(db,'settings','contact'), {email,phone}, {merge:true}); showToast('Contact saved to cloud ✓'); }
+    try { await setDoc(doc(db,'settings','contact'), {email, phone, contactHeading, contactDesc, logoUrl}, {merge:true}); showToast('Contact saved to cloud ✓'); }
     catch(e) { showToast('Saved locally only — DB error'); }
   } else { showToast('Contact saved (offline)'); }
 };
