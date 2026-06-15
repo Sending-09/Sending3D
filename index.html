@@ -715,7 +715,9 @@ async function init() {
       products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       products.sort((a,b) => (a.order||0)-(b.order||0));
       document.getElementById('loadingSpinner').classList.remove('visible');
-      render();
+      // Don't re-render while dev is editing — it wipes open admin panels
+      if (!shopEditMode) render();
+      else renderOrderProductGrid();
     });
 
     // Load settings
@@ -937,20 +939,20 @@ function getMats(id) {
   return {...base, ...(pendingMats[id]||{})};
 }
 window._toggleMat = (id, mat, enabled) => {
-  if (!pendingMats[id]) pendingMats[id] = getMats(id);
-  pendingMats[id][mat] = enabled ? 'in' : 'unavailable';
-  // Update row UI
+  // Update row UI immediately — DOM is the source of truth, read at save time
   const key = mat.replace(/[^a-z0-9]/gi,'_');
   const row = document.getElementById('matrow-'+id+'-'+key);
   if (row) {
     row.classList.toggle('disabled-mat', !enabled);
     const sel = row.querySelector('select');
-    if (sel) sel.disabled = !enabled;
+    if (sel) {
+      sel.disabled = !enabled;
+      if (enabled && sel.value === '') sel.value = 'in';
+    }
   }
 };
 window._setMatStock = (id, mat, val) => {
-  if (!pendingMats[id]) pendingMats[id] = getMats(id);
-  pendingMats[id][mat] = val;
+  // Stock select value is read directly from DOM at save time — nothing to store here
 };
 
 // Render new-product material editor
@@ -992,13 +994,28 @@ function getNewMats() {
   });
   return result;
 }
+function getNewMatsCount() {
+  return ALL_MATERIALS.filter(m => {
+    const key = m.replace(/[^a-z0-9]/gi,'_');
+    const cb = document.getElementById('newmat-cb-'+key);
+    return cb && cb.checked;
+  }).length;
+}
 
 window._saveCard = async (id) => {
-  const hasPending = pending[id] || pendingMats[id];
-  if (!hasPending) { showToast('No changes to save.'); return; }
   const updates = { ...(pending[id]||{}) };
   if (updates.price) updates.price = Number(updates.price);
-  if (pendingMats[id]) { updates.materials = getMats(id); delete pendingMats[id]; }
+  // Always read materials from DOM directly — never rely on pendingMats
+  const matResult = {};
+  ALL_MATERIALS.forEach(m => {
+    const key = m.replace(/[^a-z0-9]/gi,'_');
+    const row = document.getElementById('matrow-'+id+'-'+key);
+    if (!row) return;
+    const cb = row.querySelector('input[type=checkbox]');
+    const sel = row.querySelector('select');
+    matResult[m] = (cb && cb.checked) ? (sel ? sel.value : 'in') : 'unavailable';
+  });
+  updates.materials = matResult;
   delete pending[id];
   if (FB_READY && db) {
     try { await setDoc(doc(db,'products',id), updates, {merge:true}); showToast('Saved to cloud ✓'); }
@@ -1022,6 +1039,7 @@ window._deleteProduct = async (id) => {
 window.addProduct = async () => {
   const name = document.getElementById('new-name').value.trim();
   if (!name) { showToast('Please enter a product name.'); return; }
+  if (getNewMatsCount() === 0) { showToast('Please enable at least one material.'); return; }
   const newProd = {
     name, category: document.getElementById('new-cat').value.trim()||'3D Print',
     price: Number(document.getElementById('new-price').value)||0,
@@ -1041,6 +1059,10 @@ window.addProduct = async () => {
   ['new-name','new-cat','new-price','new-desc','new-img-url'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('new-stock').value='in';
   renderNewMatEditor();
+  if (shopEditMode) {
+    // Re-render grid to show new card, but keep edit mode open
+    render();
+  }
 };
 
 // ── CONTACT SAVE ─────────────────────────────────────────
@@ -1151,8 +1173,15 @@ window.toggleShopEdit=()=>{
   shopEditMode=!shopEditMode;
   document.getElementById('editShopBtn').classList.toggle('active',shopEditMode);
   document.getElementById('addSection').classList.toggle('visible',shopEditMode);
-  document.querySelectorAll('.admin-panel').forEach(p=>p.classList.toggle('visible',shopEditMode));
-  if(shopEditMode){ document.getElementById('shop').scrollIntoView({behavior:'smooth'}); renderNewMatEditor(); }
+  if(shopEditMode){
+    render(); // render first so admin panels exist
+    document.querySelectorAll('.admin-panel').forEach(p=>p.classList.add('visible'));
+    document.getElementById('shop').scrollIntoView({behavior:'smooth'});
+    renderNewMatEditor();
+  } else {
+    document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('visible'));
+    render(); // re-render cleanly after edits
+  }
 };
 window.toggleAboutEdit=()=>{
   aboutEditing=!aboutEditing;
@@ -1328,7 +1357,16 @@ window.orderNext = (fromStep) => {
     goToOrderStep(2);
     updateOrderMaterialCards();
   } else if (fromStep === 2) {
-    if (!orderState.material) { showToast('Please choose a material.'); return; }
+    if (!orderState.material) { showToast('Please choose a material first.'); return; }
+    // Check chosen material is actually available for this product
+    const selProd = products.find(pr => pr.id === orderState.productId);
+    const selMats = (selProd && selProd.materials) ? selProd.materials : {};
+    // If product has defined materials, validate the chosen one is enabled and in stock
+    if (selProd && Object.keys(selMats).length) {
+      const matSt = selMats[orderState.material];
+      if (!matSt || matSt === 'unavailable') { showToast('That material is not available for this product.'); return; }
+      if (matSt === 'out') { showToast('That material is currently out of stock. Please choose another.'); return; }
+    }
     goToOrderStep(3);
   } else if (fromStep === 3) {
     const fname = document.getElementById('o-fname').value.trim();
