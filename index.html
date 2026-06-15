@@ -186,6 +186,67 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
 @media (min-width: 1400px) {
   .products-grid { grid-template-columns:repeat(4,1fr); }
 }
+
+/* MATERIAL + QUANTITY ON CARD */
+.card-order-options { padding:.7rem 1rem .3rem; display:flex; flex-direction:column; gap:.5rem; border-top:1px solid var(--border); }
+.card-order-options label { font-size:.63rem; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); display:block; margin-bottom:.22rem; }
+.card-order-options select, .card-order-options input[type=number] { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Sans',sans-serif; font-size:.82rem; padding:.42rem .6rem; border-radius:2px; }
+.card-order-options select:focus, .card-order-options input:focus { outline:none; border-color:var(--accent); }
+.material-hint { font-size:.68rem; color:var(--muted); line-height:1.5; margin-top:.2rem; min-height:2.2em; }
+.qty-row { display:flex; align-items:center; gap:.5rem; }
+.qty-row input[type=number] { width:70px; text-align:center; }
+
+/* ORDER PAGE */
+#order { border-top:1px solid var(--border); padding:clamp(2.5rem,6vw,4rem) var(--pad); }
+#order .section-header { padding:0 0 1.8rem; }
+#order .section-header h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(1.6rem,4vw,2.2rem); font-weight:300; color:var(--accent); }
+#order .section-header p { color:var(--muted); font-size:.88rem; margin-top:.5rem; line-height:1.7; }
+.order-steps { display:flex; gap:0; margin-bottom:2rem; border:1px solid var(--border); border-radius:3px; overflow:hidden; }
+.order-step-tab { flex:1; padding:.6rem .4rem; text-align:center; font-size:.63rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); background:var(--surface); border-right:1px solid var(--border); transition:all .2s; }
+.order-step-tab:last-child { border-right:none; }
+.order-step-tab.active { background:rgba(200,169,110,.12); color:var(--accent); border-bottom:2px solid var(--accent); }
+.order-step-tab.done { color:var(--accent2); }
+.order-panel { display:none; }
+.order-panel.active { display:block; }
+.order-card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+.order-product-card { border:1px solid var(--border); border-radius:3px; padding:1rem; cursor:pointer; transition:all .2s; background:var(--card); }
+.order-product-card:hover { border-color:var(--accent2); background:#1e1e1e; }
+.order-product-card.selected { border-color:var(--accent); background:rgba(200,169,110,.07); }
+.order-product-card .opc-name { font-family:'Cormorant Garamond',serif; font-size:1.05rem; font-weight:400; margin-bottom:.25rem; }
+.order-product-card .opc-cat { font-size:.63rem; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:.3rem; }
+.order-product-card .opc-price { color:var(--accent); font-family:'Cormorant Garamond',serif; font-size:1rem; }
+.order-product-card .opc-check { float:right; font-size:.9rem; color:var(--accent); display:none; }
+.order-product-card.selected .opc-check { display:inline; }
+.order-materials-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:.8rem; margin-bottom:1.5rem; }
+.material-card { border:1px solid var(--border); border-radius:3px; padding:.9rem 1rem; cursor:pointer; transition:all .2s; background:var(--card); }
+.material-card:hover { border-color:var(--accent2); }
+.material-card.selected { border-color:var(--accent); background:rgba(200,169,110,.07); }
+.material-card .mc-name { font-size:.88rem; font-weight:500; margin-bottom:.3rem; }
+.material-card .mc-desc { font-size:.75rem; color:var(--muted); line-height:1.55; }
+.material-card .mc-props { display:flex; gap:.4rem; flex-wrap:wrap; margin-top:.5rem; }
+.material-card .mc-tag { font-size:.6rem; letter-spacing:.08em; text-transform:uppercase; border:1px solid var(--border); color:var(--muted); padding:.15rem .45rem; border-radius:2px; }
+.order-form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:.9rem; margin-bottom:1.2rem; }
+.order-field label { font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); display:block; margin-bottom:.28rem; }
+.order-field input, .order-field textarea, .order-field select { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Sans',sans-serif; font-size:.88rem; padding:.55rem .75rem; border-radius:2px; transition:border-color .2s; }
+.order-field input:focus, .order-field textarea:focus, .order-field select:focus { outline:none; border-color:var(--accent); }
+.order-field.full { grid-column:1/-1; }
+.order-summary-box { border:1px solid var(--border); border-radius:3px; padding:1.2rem 1.4rem; margin-bottom:1.5rem; background:var(--card); }
+.order-summary-box h4 { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:300; color:var(--accent); margin-bottom:.8rem; }
+.osb-row { display:flex; justify-content:space-between; font-size:.84rem; margin-bottom:.4rem; color:var(--muted); }
+.osb-row span:last-child { color:var(--text); }
+.osb-total { border-top:1px solid var(--border); margin-top:.6rem; padding-top:.6rem; font-size:.95rem; color:var(--accent); font-family:'Cormorant Garamond',serif; }
+.order-nav-btns { display:flex; gap:.7rem; margin-top:1rem; }
+.btn-order-next { padding:.65rem 1.6rem; background:var(--accent); color:var(--bg); border:none; font-family:'DM Sans',sans-serif; font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; border-radius:2px; }
+.btn-order-next:hover { opacity:.85; }
+.btn-order-back { padding:.65rem 1.2rem; background:none; border:1px solid var(--border); color:var(--muted); font-family:'DM Sans',sans-serif; font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; border-radius:2px; }
+.btn-order-back:hover { border-color:var(--accent); color:var(--accent); }
+.order-success { text-align:center; padding:3rem 1rem; display:none; }
+.order-success.visible { display:block; }
+.order-success .os-icon { font-size:2.5rem; margin-bottom:1rem; }
+.order-success h3 { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:300; color:var(--accent); margin-bottom:.6rem; }
+.order-success p { color:var(--muted); font-size:.9rem; line-height:1.7; max-width:420px; margin:0 auto 1.5rem; }
+.order-form-wrap { display:block; }
+
 </style>
 </head>
 <body>
@@ -212,6 +273,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
   <a onclick="navTo('home')">Home</a>
   <a onclick="navTo('about')">About</a>
   <a onclick="navTo('shop')">Shop</a>
+  <a onclick="navTo('order')">Order</a>
   <a onclick="navTo('contact')">Contact</a>
 </div>
 
@@ -225,6 +287,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
     <li><a onclick="navTo('home')">Home</a></li>
     <li><a onclick="navTo('about')">About</a></li>
     <li><a onclick="navTo('shop')">Shop</a></li>
+    <li><a onclick="navTo('order')">Order</a></li>
     <li><a onclick="navTo('contact')">Contact</a></li>
   </ul>
   <button class="hamburger" id="hamburger" onclick="toggleMenu()">
@@ -318,6 +381,130 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
 </div>
 <hr class="divider">
 
+
+<!-- ORDER PAGE -->
+<section id="order">
+  <div class="section-header">
+    <h2>Place an Order</h2>
+    <p>Follow the steps below — we'll handle the rest. You'll hear back within 24 hours to confirm details.</p>
+  </div>
+
+  <div class="order-success" id="orderSuccess">
+    <div class="os-icon">✦</div>
+    <h3>Order received</h3>
+    <p>Thank you! We've got your request and will be in touch within 24 hours to confirm your order and arrange payment.</p>
+    <button class="btn-order-next" onclick="resetOrder()">Place another order</button>
+  </div>
+
+  <div class="order-form-wrap" id="orderFormWrap">
+    <!-- STEP TABS -->
+    <div class="order-steps">
+      <div class="order-step-tab active" id="tab-1">1. Product</div>
+      <div class="order-step-tab" id="tab-2">2. Material</div>
+      <div class="order-step-tab" id="tab-3">3. Details</div>
+      <div class="order-step-tab" id="tab-4">4. Review</div>
+    </div>
+
+    <!-- STEP 1: PRODUCT -->
+    <div class="order-panel active" id="step-1">
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:1rem;">Select the product you'd like to order. Can't find what you need? Add a note in step 3.</p>
+      <div class="order-card-grid" id="order-product-grid"></div>
+      <div class="order-field" style="max-width:320px;margin-bottom:1rem;">
+        <label>Quantity</label>
+        <div class="qty-row">
+          <button class="btn-order-back" style="padding:.45rem .7rem;font-size:1rem;" onclick="changeQty(-1)">−</button>
+          <input type="number" id="order-qty" min="1" max="100" value="1" style="width:70px;text-align:center;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;padding:.5rem;border-radius:2px;">
+          <button class="btn-order-back" style="padding:.45rem .7rem;font-size:1rem;" onclick="changeQty(1)">+</button>
+        </div>
+      </div>
+      <div class="order-nav-btns">
+        <button class="btn-order-next" onclick="orderNext(1)">Continue to Material →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: MATERIAL -->
+    <div class="order-panel" id="step-2">
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:1rem;">Choose the material for your print. Hover or tap each card to read about properties and best uses.</p>
+      <div class="order-materials-grid" id="order-materials-grid">
+        <div class="material-card" onclick="selectMaterial('PLA','Standard plastic, great for most decorative and functional items. Biodegradable, low odour, easy to print.')">
+          <div class="mc-name">PLA</div>
+          <div class="mc-desc">Standard plastic — great for most decorative and functional items. Biodegradable, low odour, easy to print.</div>
+          <div class="mc-props"><span class="mc-tag">Most popular</span><span class="mc-tag">Low cost</span><span class="mc-tag">Biodegradable</span></div>
+        </div>
+        <div class="material-card" onclick="selectMaterial('PETG','Tougher than PLA with better heat and moisture resistance. Good for parts that see daily handling or mild stress.')">
+          <div class="mc-name">PETG</div>
+          <div class="mc-desc">Tougher than PLA with better heat and moisture resistance. Good for parts that see daily handling or mild stress.</div>
+          <div class="mc-props"><span class="mc-tag">Durable</span><span class="mc-tag">Heat resistant</span><span class="mc-tag">Food-safe option</span></div>
+        </div>
+        <div class="material-card" onclick="selectMaterial('ABS','High heat and impact resistance. Used for functional prototypes and automotive or industrial parts.')">
+          <div class="mc-name">ABS</div>
+          <div class="mc-desc">High heat and impact resistance. Used for functional prototypes and automotive or industrial parts.</div>
+          <div class="mc-props"><span class="mc-tag">High temp</span><span class="mc-tag">Impact resistant</span><span class="mc-tag">Sandable</span></div>
+        </div>
+        <div class="material-card" onclick="selectMaterial('TPU','Flexible rubber-like material. Ideal for phone cases, gaskets, grips, and anything that needs to flex or absorb impact.')">
+          <div class="mc-name">TPU</div>
+          <div class="mc-desc">Flexible rubber-like material. Ideal for phone cases, gaskets, grips, and anything that needs to flex.</div>
+          <div class="mc-props"><span class="mc-tag">Flexible</span><span class="mc-tag">Impact absorbing</span><span class="mc-tag">Waterproof</span></div>
+        </div>
+        <div class="material-card" onclick="selectMaterial('Resin (SLA)','Ultra-high detail for miniatures, jewellery, and dental/medical models. Smooth surface finish straight off the printer.')">
+          <div class="mc-name">Resin (SLA)</div>
+          <div class="mc-desc">Ultra-high detail for miniatures, jewellery, and art pieces. Smooth surface finish straight off the printer.</div>
+          <div class="mc-props"><span class="mc-tag">Highest detail</span><span class="mc-tag">Smooth finish</span><span class="mc-tag">Brittle</span></div>
+        </div>
+        <div class="material-card" onclick="selectMaterial('Not sure — advise me','Let us recommend the best material based on your use case. Describe your needs in step 3.')">
+          <div class="mc-name">Not sure — advise me</div>
+          <div class="mc-desc">Let us recommend the best material based on your needs. Describe what the part will be used for in step 3.</div>
+          <div class="mc-props"><span class="mc-tag">We'll help</span></div>
+        </div>
+      </div>
+      <div class="order-nav-btns">
+        <button class="btn-order-back" onclick="orderBack(2)">← Back</button>
+        <button class="btn-order-next" onclick="orderNext(2)">Continue to Details →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: CUSTOMER DETAILS -->
+    <div class="order-panel" id="step-3">
+      <div class="order-form-grid">
+        <div class="order-field"><label>First name *</label><input id="o-fname" placeholder="Ola"></div>
+        <div class="order-field"><label>Last name *</label><input id="o-lname" placeholder="Nordmann"></div>
+        <div class="order-field"><label>Email address *</label><input id="o-email" type="email" placeholder="ola@example.com"></div>
+        <div class="order-field"><label>Phone number</label><input id="o-phone" type="tel" placeholder="+47 000 00 000"></div>
+        <div class="order-field"><label>Delivery address</label><input id="o-address" placeholder="Street, City, Postcode"></div>
+        <div class="order-field"><label>Preferred colour / finish</label><input id="o-colour" placeholder="e.g. Matte black, White, Custom"></div>
+        <div class="order-field full"><label>Notes / special requirements</label><textarea id="o-notes" rows="3" placeholder="Any special dimensions, file uploads needed, use case description, deadlines…"></textarea></div>
+      </div>
+      <div class="order-nav-btns">
+        <button class="btn-order-back" onclick="orderBack(3)">← Back</button>
+        <button class="btn-order-next" onclick="orderNext(3)">Review Order →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: REVIEW + SUBMIT -->
+    <div class="order-panel" id="step-4">
+      <div class="order-summary-box">
+        <h4>Order Summary</h4>
+        <div class="osb-row"><span>Product</span><span id="rev-product">—</span></div>
+        <div class="osb-row"><span>Material</span><span id="rev-material">—</span></div>
+        <div class="osb-row"><span>Quantity</span><span id="rev-qty">—</span></div>
+        <div class="osb-row"><span>Colour / finish</span><span id="rev-colour">—</span></div>
+        <div class="osb-row"><span>Name</span><span id="rev-name">—</span></div>
+        <div class="osb-row"><span>Email</span><span id="rev-email">—</span></div>
+        <div class="osb-row"><span>Phone</span><span id="rev-phone">—</span></div>
+        <div class="osb-row"><span>Address</span><span id="rev-address">—</span></div>
+        <div class="osb-row"><span>Notes</span><span id="rev-notes" style="max-width:60%;text-align:right;">—</span></div>
+        <div class="osb-row osb-total"><span>Estimated price</span><span id="rev-price">—</span></div>
+      </div>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:1.2rem;line-height:1.6;">By submitting you agree to be contacted to confirm details and arrange payment. No charge is made until you approve the final quote.</p>
+      <div class="order-nav-btns">
+        <button class="btn-order-back" onclick="orderBack(4)">← Back</button>
+        <button class="btn-order-next" id="btn-submit-order" onclick="submitOrder()">Submit Order ✦</button>
+      </div>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+
 <!-- CONTACT -->
 <section id="contact">
   <div class="contact-left">
@@ -408,6 +595,7 @@ async function init() {
     db = getFirestore(app);
     productsCol = collection(db, 'products');
     settingsCol = collection(db, 'settings');
+    // orders collection is referenced dynamically in submitOrder
 
     document.getElementById('loadingSpinner').classList.add('visible');
 
@@ -493,6 +681,7 @@ function render() {
     grid.innerHTML = '<div class="empty-state">No products yet. Open Dev Mode → Edit Shop to add items.</div>';
     return;
   }
+  renderOrderProductGrid();
   products.forEach(p => {
     const stockLabel = p.stock==='in'?'In Stock':p.stock==='low'?'Low Stock':'Sold Out';
     const stockClass = p.stock==='low'?'low':p.stock==='out'?'out':'';
@@ -513,6 +702,28 @@ function render() {
             <div class="card-stock ${stockClass}">${stockLabel}</div>
           </div>
         </div>
+        ${p.stock!=='out'?`<div class="card-order-options">
+          <div>
+            <label>Material</label>
+            <select id="mat-${p.id}" onchange="window._updateMaterialHint('${p.id}',this.value)">
+              <option value="PLA">PLA — Standard &amp; affordable</option>
+              <option value="PETG">PETG — Tough &amp; heat resistant</option>
+              <option value="ABS">ABS — High impact &amp; heat</option>
+              <option value="TPU">TPU — Flexible / rubber-like</option>
+              <option value="Resin (SLA)">Resin (SLA) — Ultra-high detail</option>
+              <option value="Not sure">Not sure — advise me</option>
+            </select>
+            <div class="material-hint" id="hint-${p.id}">Great for most prints. Biodegradable and low cost.</div>
+          </div>
+          <div>
+            <label>Quantity</label>
+            <div class="qty-row">
+              <button type="button" onclick="window._changeCardQty('${p.id}',-1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:28px;height:28px;cursor:pointer;border-radius:2px;font-size:.9rem;">−</button>
+              <input type="number" id="qty-${p.id}" min="1" max="100" value="1">
+              <button type="button" onclick="window._changeCardQty('${p.id}',1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:28px;height:28px;cursor:pointer;border-radius:2px;font-size:.9rem;">+</button>
+            </div>
+          </div>
+        </div>`:''}
         <button class="btn-buy" ${p.stock==='out'?'disabled style="opacity:.4;cursor:not-allowed"':''} onclick="window._handleBuy('${p.id}')">
           ${p.stock==='out'?'Sold Out':'Order Now'}
         </button>
@@ -730,9 +941,50 @@ window.toggleContactEdit=()=>{
   btn2.classList.toggle('active',open);
   if(open) document.getElementById('contact').scrollIntoView({behavior:'smooth'});
 };
-window._handleBuy=()=>{
-  document.getElementById('contact').scrollIntoView({behavior:'smooth'});
-  showToast('Scroll down to contact us!');
+// Material hints for card dropdowns
+const MATERIAL_HINTS = {
+  'PLA': 'Great for most prints. Biodegradable, low odour and low cost.',
+  'PETG': 'Tough and heat resistant. Good for functional parts that see daily use.',
+  'ABS': 'High heat and impact resistance. Ideal for engineering prototypes.',
+  'TPU': 'Flexible rubber-like material. Perfect for grips, cases and gaskets.',
+  'Resin (SLA)': 'Ultra-high detail and smooth finish. Best for art and miniatures.',
+  'Not sure': "No problem — describe your use case in step 3 and we'll advise you."
+};
+window._updateMaterialHint = (id, val) => {
+  const el = document.getElementById('hint-'+id);
+  if (el) el.textContent = MATERIAL_HINTS[val] || '';
+};
+window._changeCardQty = (id, delta) => {
+  const input = document.getElementById('qty-'+id);
+  if (!input) return;
+  const newVal = Math.max(1, Math.min(100, (parseInt(input.value)||1) + delta));
+  input.value = newVal;
+};
+
+window._handleBuy = (id) => {
+  const p = products.find(pr => pr.id === id);
+  if (!p) return;
+  const mat = document.getElementById('mat-'+id);
+  const qty = document.getElementById('qty-'+id);
+  // Pre-select in order form
+  orderState.productId = id;
+  orderState.productName = p.name;
+  orderState.productPrice = p.price;
+  orderState.material = mat ? mat.value : 'PLA';
+  orderState.qty = qty ? parseInt(qty.value)||1 : 1;
+  // Render product grid and select this one
+  renderOrderProductGrid();
+  // Highlight the right material card
+  document.querySelectorAll('.material-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.material-card').forEach(c => {
+    if (c.querySelector('.mc-name').textContent === orderState.material) c.classList.add('selected');
+  });
+  // Set qty
+  document.getElementById('order-qty').value = orderState.qty;
+  // Jump to order page step 1
+  goToOrderStep(1);
+  document.getElementById('order').scrollIntoView({behavior:'smooth'});
+  showToast('Fill in your details below ✦');
 };
 
 let toastTimer;
@@ -744,7 +996,149 @@ function showToast(msg){
 }
 window.showToast=showToast;
 
+
+// ── ORDER PAGE ────────────────────────────────────────────
+let orderState = { step:1, productId:null, productName:'', productPrice:0, material:'', qty:1 };
+
+function renderOrderProductGrid() {
+  const grid = document.getElementById('order-product-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const available = products.filter(p => p.stock !== 'out');
+  if (!available.length) {
+    grid.innerHTML = '<p style="color:var(--muted);font-size:.85rem;">No products available right now.</p>';
+    return;
+  }
+  available.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'order-product-card' + (orderState.productId === p.id ? ' selected' : '');
+    div.innerHTML = `<span class="opc-check">✓</span>
+      <div class="opc-cat">${esc(p.category)}</div>
+      <div class="opc-name">${esc(p.name)}</div>
+      <div class="opc-price">kr ${Number(p.price).toLocaleString('no-NO')}</div>`;
+    div.onclick = () => {
+      orderState.productId = p.id;
+      orderState.productName = p.name;
+      orderState.productPrice = p.price;
+      document.querySelectorAll('.order-product-card').forEach(c => c.classList.remove('selected'));
+      div.classList.add('selected');
+    };
+    grid.appendChild(div);
+  });
+}
+
+function goToOrderStep(n) {
+  for (let i=1;i<=4;i++) {
+    document.getElementById('step-'+i).classList.toggle('active', i===n);
+    const tab = document.getElementById('tab-'+i);
+    tab.classList.remove('active','done');
+    if (i===n) tab.classList.add('active');
+    else if (i<n) tab.classList.add('done');
+  }
+  orderState.step = n;
+}
+
+window.changeQty = (delta) => {
+  const input = document.getElementById('order-qty');
+  input.value = Math.max(1, Math.min(100, (parseInt(input.value)||1) + delta));
+};
+
+window.selectMaterial = (name) => {
+  orderState.material = name;
+  document.querySelectorAll('.material-card').forEach(c => {
+    c.classList.toggle('selected', c.querySelector('.mc-name').textContent === name);
+  });
+};
+
+window.orderNext = (fromStep) => {
+  if (fromStep === 1) {
+    if (!orderState.productId) { showToast('Please select a product first.'); return; }
+    orderState.qty = parseInt(document.getElementById('order-qty').value)||1;
+    goToOrderStep(2);
+  } else if (fromStep === 2) {
+    if (!orderState.material) { showToast('Please choose a material.'); return; }
+    goToOrderStep(3);
+  } else if (fromStep === 3) {
+    const fname = document.getElementById('o-fname').value.trim();
+    const lname = document.getElementById('o-lname').value.trim();
+    const email = document.getElementById('o-email').value.trim();
+    if (!fname || !lname) { showToast('Please enter your name.'); return; }
+    if (!email || !email.includes('@')) { showToast('Please enter a valid email.'); return; }
+    // Populate review
+    document.getElementById('rev-product').textContent = orderState.productName;
+    document.getElementById('rev-material').textContent = orderState.material;
+    document.getElementById('rev-qty').textContent = orderState.qty;
+    document.getElementById('rev-colour').textContent = document.getElementById('o-colour').value||'—';
+    document.getElementById('rev-name').textContent = fname + ' ' + lname;
+    document.getElementById('rev-email').textContent = email;
+    document.getElementById('rev-phone').textContent = document.getElementById('o-phone').value||'—';
+    document.getElementById('rev-address').textContent = document.getElementById('o-address').value||'—';
+    document.getElementById('rev-notes').textContent = document.getElementById('o-notes').value||'—';
+    document.getElementById('rev-price').textContent = 'kr ' + (Number(orderState.productPrice) * orderState.qty).toLocaleString('no-NO') + ' (estimated)';
+    goToOrderStep(4);
+  }
+  document.getElementById('order').scrollIntoView({behavior:'smooth'});
+};
+
+window.orderBack = (fromStep) => {
+  goToOrderStep(fromStep - 1);
+  document.getElementById('order').scrollIntoView({behavior:'smooth'});
+};
+
+window.submitOrder = async () => {
+  const btn = document.getElementById('btn-submit-order');
+  btn.textContent = 'Submitting…'; btn.disabled = true;
+
+  const orderData = {
+    product: orderState.productName,
+    productId: orderState.productId,
+    material: orderState.material,
+    qty: orderState.qty,
+    colour: document.getElementById('o-colour').value.trim(),
+    firstName: document.getElementById('o-fname').value.trim(),
+    lastName: document.getElementById('o-lname').value.trim(),
+    email: document.getElementById('o-email').value.trim(),
+    phone: document.getElementById('o-phone').value.trim(),
+    address: document.getElementById('o-address').value.trim(),
+    notes: document.getElementById('o-notes').value.trim(),
+    estimatedPrice: Number(orderState.productPrice) * orderState.qty,
+    status: 'new',
+    createdAt: new Date().toISOString()
+  };
+
+  // Save to Firestore
+  if (FB_READY && db) {
+    try {
+      const ordersCol = collection(db, 'orders');
+      await addDoc(ordersCol, orderData);
+    } catch(e) {
+      console.warn('Firestore order save failed:', e.message);
+    }
+  }
+
+  // Show success
+  document.getElementById('orderFormWrap').style.display = 'none';
+  document.getElementById('orderSuccess').classList.add('visible');
+  btn.textContent = 'Submit Order ✦'; btn.disabled = false;
+  showToast('Order submitted! We\'ll be in touch ❆');
+};
+
+window.resetOrder = () => {
+  orderState = { step:1, productId:null, productName:'', productPrice:0, material:'', qty:1 };
+  ['o-fname','o-lname','o-email','o-phone','o-address','o-colour','o-notes'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('order-qty').value = 1;
+  document.querySelectorAll('.material-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.order-product-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('orderSuccess').classList.remove('visible');
+  document.getElementById('orderFormWrap').style.display = 'block';
+  goToOrderStep(1);
+  renderOrderProductGrid();
+};
+
 init();
+// Render order product grid after products load — hooked from render()
 </script>
 </body>
 </html>
