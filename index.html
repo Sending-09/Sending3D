@@ -608,72 +608,86 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
 
     <!-- STEP 3: CUSTOMER DETAILS -->
     <div class="order-panel" id="step-3">
-      <div class="order-form-grid">
-        <div class="order-field"><label>First name *</label><input id="o-fname" placeholder="Ola"></div>
-        <div class="order-field"><label>Last name *</label><input id="o-lname" placeholder="Nordmann"></div>
-        <div class="order-field"><label>Email address *</label><input id="o-email" type="email" placeholder="ola@example.com"></div>
-        <div class="order-field"><label>Phone number</label><input id="o-phone" type="tel" placeholder="+47 000 00 000"></div>
-        <div class="order-field"><label>Delivery address</label><input id="o-address" placeholder="Street, City, Postcode"></div>
-        <div class="order-field" id="colour-field-wrap">
-          <label id="colour-field-label">Preferred colour / finish</label>
-          <input id="o-colour" placeholder="e.g. Matte black, White, Custom">
-          <div class="field-fixed-badge" id="colour-fixed-badge" style="display:none;"></div>
+
+      <!-- PERSONAL DETAILS — always shown, restructured into clear sections -->
+      <div style="margin-bottom:1.2rem;">
+        <p style="font-size:.63rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:.7rem;">Contact details</p>
+        <div class="order-form-grid">
+          <div class="order-field"><label>First name *</label><input id="o-fname" placeholder="Ola"></div>
+          <div class="order-field"><label>Last name *</label><input id="o-lname" placeholder="Nordmann"></div>
+          <div class="order-field"><label>Email address *</label><input id="o-email" type="email" placeholder="ola@example.com"></div>
+          <div class="order-field"><label>Phone number</label><input id="o-phone" type="tel" placeholder="+47 000 00 000"></div>
         </div>
-        <div class="order-field full" id="notes-field-wrap">
-          <label>Notes / special requirements</label>
-          <textarea id="o-notes" rows="3" placeholder="Dimensions, deadlines, colour preferences, use case details…"></textarea>
+      </div>
+
+      <div style="margin-bottom:1.2rem;">
+        <p style="font-size:.63rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:.7rem;">Delivery</p>
+        <div class="order-form-grid">
+          <div class="order-field full"><label>Delivery address</label><input id="o-address" placeholder="Street, City, Postcode"></div>
+          <div class="order-field" id="colour-field-wrap">
+            <label id="colour-field-label">Preferred colour / finish</label>
+            <input id="o-colour" placeholder="e.g. Matte black, White, Custom">
+            <div class="field-fixed-badge" id="colour-fixed-badge" style="display:none;"></div>
+          </div>
         </div>
+      </div>
 
-        <!-- FILE INSTRUCTIONS -->
-        <div class="order-field full">
-          <label>Design file</label>
-          <div class="file-guide-box">
-            <p class="file-guide-intro">If you have a 3D file or reference, send it to us after ordering. Here's the easiest way:</p>
-            <div class="file-guide-options">
+      <!-- CUSTOM / SPECIAL REQUEST SECTION — hidden for standard products -->
+      <div id="custom-section-wrap">
+        <p style="font-size:.63rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:.7rem;">Custom requirements</p>
+        <div class="order-form-grid">
+          <div class="order-field full" id="notes-field-wrap">
+            <label>Notes / special requirements</label>
+            <textarea id="o-notes" rows="3" placeholder="Dimensions, deadlines, colour preferences, use case details…"></textarea>
+          </div>
 
-              <div class="file-guide-option">
-                <div class="fgo-num">1</div>
-                <div class="fgo-body">
-                  <div class="fgo-title">Email us the file</div>
-                  <div class="fgo-desc">After submitting, send your file directly to <span id="file-guide-email" class="fgo-email">hello@sending3d.no</span>. Use your order name as the subject line.</div>
-                  <button class="fgo-btn" onclick="copyFileEmail()">Copy email address</button>
+          <!-- FILE INSTRUCTIONS -->
+          <div class="order-field full" id="file-guide-wrap">
+            <label>Design file</label>
+            <div class="file-guide-box">
+              <p class="file-guide-intro">If you have a 3D file or reference, send it to us after ordering. Here's the easiest way:</p>
+              <div class="file-guide-options">
+                <div class="file-guide-option">
+                  <div class="fgo-num">1</div>
+                  <div class="fgo-body">
+                    <div class="fgo-title">Email us the file</div>
+                    <div class="fgo-desc">After submitting, send your file directly to <span id="file-guide-email" class="fgo-email">hello@sending3d.no</span>. Use your order name as the subject line.</div>
+                    <button class="fgo-btn" onclick="copyFileEmail()">Copy email address</button>
+                  </div>
+                </div>
+                <div class="file-guide-option">
+                  <div class="fgo-num">2</div>
+                  <div class="fgo-body">
+                    <div class="fgo-title">Share via Google Drive / Dropbox / WeTransfer</div>
+                    <div class="fgo-desc">Upload your file to any cloud service, paste a share link in the field below, and we'll download it.</div>
+                    <input id="o-filelink" type="url" placeholder="https://drive.google.com/… or wetransfer.com/…" style="margin-top:.5rem;width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.84rem;padding:.48rem .65rem;border-radius:2px;">
+                  </div>
+                </div>
+                <div class="file-guide-option">
+                  <div class="fgo-num">3</div>
+                  <div class="fgo-body">
+                    <div class="fgo-title">No file yet? Describe it instead</div>
+                    <div class="fgo-desc">Include dimensions (mm), what it's for, and any references in the notes above. We'll confirm before printing.</div>
+                  </div>
                 </div>
               </div>
-
-              <div class="file-guide-option">
-                <div class="fgo-num">2</div>
-                <div class="fgo-body">
-                  <div class="fgo-title">Share via Google Drive / Dropbox / WeTransfer</div>
-                  <div class="fgo-desc">Upload your file to any cloud service, paste a share link in the field below, and we'll download it.</div>
-                  <input id="o-filelink" type="url" placeholder="https://drive.google.com/… or wetransfer.com/…" style="margin-top:.5rem;width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.84rem;padding:.48rem .65rem;border-radius:2px;">
-                </div>
+              <div class="file-guide-formats">
+                <span class="fgf-label">Accepted formats</span>
+                <span class="fgf-tag">.STL</span>
+                <span class="fgf-tag">.OBJ</span>
+                <span class="fgf-tag">.STEP</span>
+                <span class="fgf-tag">.3MF</span>
+                <span class="fgf-tag">.F3D</span>
+                <span class="fgf-tag">Images / sketches</span>
               </div>
-
-              <div class="file-guide-option">
-                <div class="fgo-num">3</div>
-                <div class="fgo-body">
-                  <div class="fgo-title">No file yet? Describe it instead</div>
-                  <div class="fgo-desc">Use the notes field above. Include dimensions (mm), what it's for, and any references. We'll get back to you to confirm before printing.</div>
-                </div>
-              </div>
-
-            </div>
-            <div class="file-guide-formats">
-              <span class="fgf-label">Accepted formats</span>
-              <span class="fgf-tag">.STL</span>
-              <span class="fgf-tag">.OBJ</span>
-              <span class="fgf-tag">.STEP</span>
-              <span class="fgf-tag">.3MF</span>
-              <span class="fgf-tag">.F3D</span>
-              <span class="fgf-tag">Images / sketches</span>
             </div>
           </div>
         </div>
-
       </div>
+
       <div class="order-nav-btns">
-        <button class="btn-order-back" onclick="orderBack(3)">← Back</button>
-        <button class="btn-order-next" onclick="orderNext(3)">Review Order →</button>
+        <button class="btn-order-back" onclick="orderBack(3)">&#8592; Back</button>
+        <button class="btn-order-next" onclick="orderNext(3)">Review Order &#8594;</button>
       </div>
     </div>
 
@@ -933,7 +947,9 @@ function applyProductOrderOptions() {
     colourInput.placeholder = 'e.g. Matte black, White, Custom';
     colourInput.removeAttribute('readonly');
     colourBadge.style.display = 'none';
-    notesWrap.classList.remove('field-hidden');
+    if (notesWrap) notesWrap.classList.remove('field-hidden');
+    const cw = document.getElementById('custom-section-wrap');
+    if (cw) cw.style.display = '';
     return;
   }
 
@@ -967,12 +983,20 @@ function applyProductOrderOptions() {
     colourBadge.style.display = 'none';
   }
 
-  // Notes field
-  if (!p.allowNotes) {
-    notesWrap.classList.add('field-hidden');
-    document.getElementById('o-notes').value = '';
-  } else {
-    notesWrap.classList.remove('field-hidden');
+  // Notes + file guide — hide the entire custom section together
+  const customWrap = document.getElementById('custom-section-wrap');
+  if (customWrap) {
+    if (!p.allowNotes) {
+      customWrap.style.display = 'none';
+      document.getElementById('o-notes').value = '';
+      const fl = document.getElementById('o-filelink');
+      if (fl) fl.value = '';
+    } else {
+      customWrap.style.display = '';
+    }
+  } else if (notesWrap) {
+    // Fallback if wrap not found
+    notesWrap.classList.toggle('field-hidden', !p.allowNotes);
   }
 }
 
