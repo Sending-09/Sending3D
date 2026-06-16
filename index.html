@@ -394,7 +394,22 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
     <div class="add-grid">
       <div class="field"><label>Product Name</label><input id="new-name" placeholder="e.g. Custom Phone Stand"></div>
       <div class="field"><label>Category</label><input id="new-cat" placeholder="e.g. Functional"></div>
-      <div class="field"><label>Price (kr)</label><input id="new-price" type="number" placeholder="0"></div>
+      <div class="field">
+        <label>Pricing mode</label>
+        <select id="new-price-mode" onchange="window._onNewPriceModeChange(this.value)">
+          <option value="fixed">Fixed price</option>
+          <option value="quote">Price on request</option>
+          <option value="material">Per material</option>
+        </select>
+      </div>
+      <div class="field" id="new-price-fixed-wrap">
+        <label>Base price (kr)</label>
+        <input type="number" id="new-price" placeholder="0">
+      </div>
+      <div class="field full" id="new-price-material-wrap" style="display:none">
+        <label>Price per material (kr) — leave blank to use base price</label>
+        <div id="new-mat-prices" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.5rem;margin-top:.3rem;"></div>
+      </div>
       <div class="field">
         <label>Stock</label>
         <select id="new-stock">
@@ -664,6 +679,9 @@ const EMOJIS = ['🖨️','⚙️','🔩','🧩','🪄','📐','🔧','💠'];
 
 // Detect if Firebase is configured
 const FB_READY = FIREBASE_CONFIG.apiKey !== 'PASTE_YOUR_apiKey_HERE';
+// Firestore collections used: products, settings, orders
+// Make sure your Firestore rules allow read/write to 'orders':
+//   match /orders/{id} { allow read, write: if true; }
 
 let db, productsCol, settingsCol;
 let products = [];
@@ -754,7 +772,10 @@ function applySettings() {
   document.getElementById('edit-phone').value = siteSettings.phone;
   // Contact heading + desc
   if (siteSettings.contactHeading) document.getElementById('contact-heading').textContent = siteSettings.contactHeading;
-  if (siteSettings.contactDesc) document.getElementById('contact-desc').textContent = siteSettings.contactDesc;
+  if (siteSettings.contactDesc) {
+    const cd = document.getElementById('contact-desc');
+    cd.innerHTML = esc(siteSettings.contactDesc).replace(/\n/g,'<br>');
+  }
   document.getElementById('edit-contact-heading').value = siteSettings.contactHeading||'';
   document.getElementById('edit-contact-desc').value = siteSettings.contactDesc||'';
   // Logo
@@ -769,14 +790,22 @@ function applySettings() {
     logoImg.style.display = 'none';
     logoText.style.display = 'inline';
   }
-  if (siteSettings.about) document.getElementById('about-text').textContent = siteSettings.about;
+  if (siteSettings.about) {
+    const at = document.getElementById('about-text');
+    // Render newlines as <br> for display (when not editing)
+    if (at.contentEditable !== 'true') {
+      at.innerHTML = esc(siteSettings.about).replace(/\n/g,'<br>');
+    }
+  }
   // Hero
   if (siteSettings.heroEyebrow) document.getElementById('hero-eyebrow').textContent = siteSettings.heroEyebrow;
   if (siteSettings.heroLine1 || siteSettings.heroLine2) {
     const t = document.getElementById('hero-title');
     t.innerHTML = esc(siteSettings.heroLine1||'') + (siteSettings.heroLine2 ? '<br><em id="hero-line2">' + esc(siteSettings.heroLine2) + '</em>' : '');
   }
-  if (siteSettings.heroSub) document.getElementById('hero-sub').textContent = siteSettings.heroSub;
+  if (siteSettings.heroSub) {
+    document.getElementById('hero-sub').innerHTML = esc(siteSettings.heroSub).replace(/\n/g,'<br>');
+  }
   if (siteSettings.shopTitle) document.getElementById('shop-section-title').textContent = siteSettings.shopTitle;
   // Update email in file guide
   const fge = document.getElementById('file-guide-email');
@@ -787,6 +816,91 @@ function applySettings() {
   document.getElementById('edit-hero-line2').value = siteSettings.heroLine2||'';
   document.getElementById('edit-hero-sub').value = siteSettings.heroSub||'';
   document.getElementById('edit-shop-title').value = siteSettings.shopTitle||'';
+}
+
+// ── PRICE HELPERS ───────────────────────────────────────
+function buildCardPrice(p) {
+  if (p.priceMode === 'quote') return '<span style="font-size:.8rem;font-style:italic;color:var(--muted)">Price on request</span>';
+  if (p.priceMode === 'material') {
+    const prices = Object.values(p.materialPrices || {}).filter(v => v > 0);
+    if (!prices.length) return p.price ? 'kr ' + Number(p.price).toLocaleString('no-NO') : '<span style="font-size:.8rem;font-style:italic;color:var(--muted)">Price on request</span>';
+    const min = Math.min(...prices), max = Math.max(...prices);
+    return min === max ? 'kr ' + min.toLocaleString('no-NO') : 'kr ' + min.toLocaleString('no-NO') + '–' + max.toLocaleString('no-NO');
+  }
+  return p.price ? 'kr ' + Number(p.price).toLocaleString('no-NO') : '<span style="font-size:.8rem;font-style:italic;color:var(--muted)">Price on request</span>';
+}
+
+function buildPriceFields(p) {
+  const mode = p.priceMode || 'fixed';
+  const mp = p.materialPrices || {};
+  const mats = p.materials || {};
+  const availMats = ALL_MATERIALS.filter(m => mats[m] && mats[m] !== 'unavailable');
+  if (mode === 'fixed') {
+    const pidJ2 = JSON.stringify(p.id);
+    return '<div style="margin-top:.4rem"><label style="font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.28rem;">Base price (kr)</label>'
+      + '<input type="number" value="'+esc(p.price||'')+'" placeholder="0" oninput="window._pendingUpdate('+pidJ2+',&quot;price&quot;,this.value)" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:DM Sans,sans-serif;font-size:.84rem;padding:.48rem .65rem;border-radius:2px;"></div>';
+  }
+  if (mode === 'quote') {
+    return '<p style="font-size:.76rem;color:var(--muted);margin-top:.4rem;line-height:1.6;">Price will be discussed with the customer after order — no price shown on site.</p>';
+  }
+  if (mode === 'material') {
+    const pidJ3 = JSON.stringify(p.id);
+    const baseRow = '<div style="margin-bottom:.5rem"><label style="font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.28rem;">Fallback base price (kr)</label>'
+      + '<input type="number" value="'+esc(p.price||'')+'" placeholder="0 (optional)" oninput="window._pendingUpdate('+pidJ3+',&quot;price&quot;,this.value)" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:DM Sans,sans-serif;font-size:.84rem;padding:.48rem .65rem;border-radius:2px;"></div>';
+    const matRows = availMats.map(m => {
+      const key = m.replace(/[^a-z0-9]/gi,'_');
+      const pid = p.id;
+      const mJson = JSON.stringify(m);
+      const pidJson = JSON.stringify(pid);
+      return '<div style="display:flex;gap:.4rem;align-items:center;margin-bottom:.3rem;">'
+        + '<span style="flex:1;font-size:.76rem;color:var(--text);">'+esc(m)+'</span>'
+        + '<input type="number" id="matprice-'+pid+'-'+key+'" placeholder="kr" value="'+esc(mp[m]||'')+'" oninput="window._setMatPrice('+pidJson+','+mJson+',this.value)" style="width:90px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:.82rem;padding:.35rem .5rem;border-radius:2px;text-align:right;">'
+        + '</div>';
+    }).join('');
+    return '<div style="margin-top:.4rem">'
+      + baseRow
+      + '<label style="font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.4rem;">Price per material (kr)</label>'
+      + (matRows || '<p style="font-size:.74rem;color:var(--muted);">Enable materials above first.</p>')
+      + '</div>';
+  }
+  return '';
+}
+
+window._onPriceModeChange = (id, mode) => {
+  if (!pending[id]) pending[id] = {};
+  pending[id].priceMode = mode;
+  const el = document.getElementById('pricefields-'+id);
+  const p = {...(products.find(pr=>pr.id===id)||{}), ...(pending[id]||{}), priceMode:mode};
+  if (el) el.innerHTML = buildPriceFields(p);
+};
+
+window._setMatPrice = (id, mat, val) => {
+  if (!pending[id]) pending[id] = {};
+  if (!pending[id].materialPrices) {
+    const p = products.find(pr=>pr.id===id);
+    pending[id].materialPrices = {...((p&&p.materialPrices)||{})};
+  }
+  pending[id].materialPrices[mat] = Number(val)||0;
+};
+
+// New product price mode helpers
+window._onNewPriceModeChange = (mode) => {
+  document.getElementById('new-price-fixed-wrap').style.display = mode === 'quote' ? 'none' : '';
+  const matWrap = document.getElementById('new-price-material-wrap');
+  matWrap.style.display = mode === 'material' ? '' : 'none';
+  if (mode === 'material') renderNewMatPrices();
+};
+
+function renderNewMatPrices() {
+  const el = document.getElementById('new-mat-prices');
+  if (!el) return;
+  el.innerHTML = ALL_MATERIALS.map(m => {
+    const key = m.replace(/[^a-z0-9]/gi,'_');
+    return '<div style="display:flex;gap:.4rem;align-items:center;">'
+      + '<span style="flex:1;font-size:.76rem;color:var(--text);">'+m+'</span>'
+      + '<input type="number" id="new-matprice-'+key+'" placeholder="kr" style="width:80px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:.82rem;padding:.35rem .5rem;border-radius:2px;text-align:right;">'
+      + '</div>';
+  }).join('');
 }
 
 // ── ADMIN MATERIAL EDITOR BUILDER ────────────────────────
@@ -811,48 +925,22 @@ function buildAdminMatEditor(p) {
   }).join('');
 }
 
-// ── MATERIAL CARD HTML BUILDER ───────────────────────────
+// ── MATERIAL CARD HTML BUILDER (card page — minimal) ─────
 function buildCardMatHTML(p) {
+  // Show available in-stock materials compactly on the card. Selection happens on the Order page.
   const mats = p.materials || {};
-  const availMats = ALL_MATERIALS.filter(m => mats[m] && mats[m] !== 'unavailable');
-  if (p.stock === 'out' || !availMats.length) return '';
-
-  const matListItems = availMats.map(m => {
-    const st = mats[m];
-    const cls = st==='low'?'cmi-low':st==='out'?'cmi-out':'cmi-in';
-    const lbl = st==='low'?'Low Stock':st==='out'?'Out of Stock':'In Stock';
-    return '<div class="card-mat-item"><span>'+esc(m)+'</span><span class="'+cls+'">'+lbl+'</span></div>';
-  }).join('');
-
-  const opts = availMats.map(m => {
-    const st = mats[m];
-    const suffix = st==='low' ? ' (Low Stock)' : st==='out' ? ' (Out of Stock)' : '';
-    const dis = st==='out' ? ' disabled' : '';
-    return '<option value="'+esc(m)+'"'+dis+'>'+esc(m)+suffix+'</option>';
-  }).join('');
-
-  const firstAvail = availMats.find(m => mats[m] !== 'out') || availMats[0];
-  const hint = MATERIAL_HINTS[firstAvail] || '';
-  const pidJ = JSON.stringify(p.id);
-
+  const inStockMats = ALL_MATERIALS.filter(m => mats[m] && mats[m] !== 'unavailable' && mats[m] !== 'out');
+  const lowMats = ALL_MATERIALS.filter(m => mats[m] === 'low');
+  const allAvail = ALL_MATERIALS.filter(m => mats[m] && mats[m] !== 'unavailable');
+  if (!allAvail.length) return '';
   return '<div class="card-mat-list">'
-    + '<div class="card-mat-list-label">Available materials</div>'
-    + matListItems
-    + '</div>'
-    + '<div class="card-order-options">'
-    + '<div>'
-    + '<label>Select material</label>'
-    + '<select id="mat-'+p.id+'" onchange="window._updateMaterialHint('+pidJ+',this.value)">'+opts+'</select>'
-    + '<div class="material-hint" id="hint-'+p.id+'">'+hint+'</div>'
-    + '</div>'
-    + '<div>'
-    + '<label>Quantity</label>'
-    + '<div class="qty-row">'
-    + '<button type="button" onclick="window._changeCardQty('+pidJ+',-1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:28px;height:28px;cursor:pointer;border-radius:2px;font-size:.9rem;">−</button>'
-    + '<input type="number" id="qty-'+p.id+'" min="1" max="100" value="1">'
-    + '<button type="button" onclick="window._changeCardQty('+pidJ+',1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:28px;height:28px;cursor:pointer;border-radius:2px;font-size:.9rem;">+</button>'
-    + '</div>'
-    + '</div>'
+    + '<div class="card-mat-list-label">Materials</div>'
+    + allAvail.map(m => {
+        const st = mats[m];
+        const cls = st==='low'?'cmi-low':st==='out'?'cmi-out':'cmi-in';
+        const lbl = st==='low'?'Low Stock':st==='out'?'Out of Stock':'In Stock';
+        return '<div class="card-mat-item"><span>'+esc(m)+'</span><span class="'+cls+'">'+lbl+'</span></div>';
+      }).join('')
     + '</div>';
 }
 
@@ -881,7 +969,7 @@ function render() {
           <div class="card-name">${esc(p.name)}</div>
           <div class="card-desc">${esc(p.desc)}</div>
           <div class="card-footer">
-            <div class="card-price">kr ${Number(p.price).toLocaleString('no-NO')}</div>
+            <div class="card-price">${buildCardPrice(p)}</div>
             <div class="card-stock ${stockClass}">${stockLabel}</div>
           </div>
         </div>
@@ -899,7 +987,13 @@ function render() {
           <div><label>Product Name</label><input value="${esc(p.name)}" oninput="window._pendingUpdate('${p.id}','name',this.value)"></div>
           <div><label>Category</label><input value="${esc(p.category)}" oninput="window._pendingUpdate('${p.id}','category',this.value)"></div>
           <div class="admin-row">
-            <div><label>Price (kr)</label><input type="number" value="${p.price}" oninput="window._pendingUpdate('${p.id}','price',this.value)"></div>
+            <div><label>Pricing mode</label>
+              <select id="pricemode-${p.id}" onchange="window._onPriceModeChange('${p.id}',this.value)">
+                <option value="fixed" ${(p.priceMode||'fixed')==='fixed'?'selected':''}>Fixed price</option>
+                <option value="quote" ${(p.priceMode||'')==='quote'?'selected':''}>Price on request</option>
+                <option value="material" ${(p.priceMode||'')==='material'?'selected':''}>Per material</option>
+              </select>
+            </div>
             <div><label>Stock</label>
               <select onchange="window._pendingUpdate('${p.id}','stock',this.value)">
                 <option value="in" ${p.stock==='in'?'selected':''}>In Stock</option>
@@ -908,6 +1002,7 @@ function render() {
               </select>
             </div>
           </div>
+          <div id="pricefields-${p.id}">${buildPriceFields(p)}</div>
           <div><label>Description</label><textarea rows="2" oninput="window._pendingUpdate('${p.id}','desc',this.value)">${esc(p.desc)}</textarea></div>
           <div>
             <div class="mat-editor-label">Materials & availability</div>
@@ -1005,6 +1100,20 @@ function getNewMatsCount() {
 window._saveCard = async (id) => {
   const updates = { ...(pending[id]||{}) };
   if (updates.price) updates.price = Number(updates.price);
+  // Capture materialPrices from DOM if in material pricing mode
+  const priceModeEl = document.getElementById('pricemode-'+id);
+  if (priceModeEl) {
+    updates.priceMode = priceModeEl.value;
+    if (priceModeEl.value === 'material') {
+      const matPrices = {};
+      ALL_MATERIALS.forEach(m => {
+        const key = m.replace(/[^a-z0-9]/gi,'_');
+        const inp = document.getElementById('matprice-'+id+'-'+key);
+        if (inp && inp.value) matPrices[m] = Number(inp.value)||0;
+      });
+      updates.materialPrices = matPrices;
+    }
+  }
   // Always read materials from DOM directly — never rely on pendingMats
   const matResult = {};
   ALL_MATERIALS.forEach(m => {
@@ -1040,9 +1149,20 @@ window.addProduct = async () => {
   const name = document.getElementById('new-name').value.trim();
   if (!name) { showToast('Please enter a product name.'); return; }
   if (getNewMatsCount() === 0) { showToast('Please enable at least one material.'); return; }
+  const newPriceMode = document.getElementById('new-price-mode').value;
+  const newMatPrices = {};
+  if (newPriceMode === 'material') {
+    ALL_MATERIALS.forEach(m => {
+      const key = m.replace(/[^a-z0-9]/gi,'_');
+      const inp = document.getElementById('new-matprice-'+key);
+      if (inp && inp.value) newMatPrices[m] = Number(inp.value);
+    });
+  }
   const newProd = {
     name, category: document.getElementById('new-cat').value.trim()||'3D Print',
     price: Number(document.getElementById('new-price').value)||0,
+    priceMode: newPriceMode,
+    materialPrices: newMatPrices,
     stock: document.getElementById('new-stock').value,
     desc: document.getElementById('new-desc').value.trim(),
     img: document.getElementById('new-img-url').value.trim(),
@@ -1058,6 +1178,8 @@ window.addProduct = async () => {
   }
   ['new-name','new-cat','new-price','new-desc','new-img-url'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('new-stock').value='in';
+  document.getElementById('new-price-mode').value='fixed';
+  window._onNewPriceModeChange('fixed');
   renderNewMatEditor();
   if (shopEditMode) {
     // Re-render grid to show new card, but keep edit mode open
@@ -1070,7 +1192,7 @@ window.saveContact = async () => {
   const email = document.getElementById('edit-email').value.trim();
   const phone = document.getElementById('edit-phone').value.trim();
   const contactHeading = document.getElementById('edit-contact-heading').value.trim();
-  const contactDesc = document.getElementById('edit-contact-desc').value.trim();
+  const contactDesc = document.getElementById('edit-contact-desc').value;
   const logoUrl = document.getElementById('edit-logo-url').value.trim();
   if (!email) { showToast('Please enter an email.'); return; }
   Object.assign(siteSettings, { email, phone, contactHeading, contactDesc, logoUrl });
@@ -1083,7 +1205,10 @@ window.saveContact = async () => {
 
 // ── ABOUT SAVE ───────────────────────────────────────────
 async function saveAbout(text) {
-  siteSettings.about = text;
+  // Normalize: get plain text with newlines from contenteditable
+  const normalized = text.replace(/\r\n|\r/g, '\n');
+  siteSettings.about = normalized;
+  text = normalized;
   if (FB_READY && db) {
     try { await setDoc(doc(db,'settings','about'), {about:text}, {merge:true}); showToast('About saved to cloud ✓'); }
     catch(e) { showToast('Saved locally only'); }
@@ -1192,7 +1317,7 @@ window.toggleAboutEdit=()=>{
   if(aboutEditing){
     document.getElementById('about').scrollIntoView({behavior:'smooth'});
     at.focus();
-    at.onblur=()=>saveAbout(at.textContent);
+    at.onblur=()=>{ const txt=at.innerText; at.contentEditable='false'; at.innerHTML=esc(txt).replace(/\n/g,'<br>'); at.contentEditable='true'; saveAbout(txt); };
   }
 };
 window.toggleContactEdit=()=>{
@@ -1228,29 +1353,17 @@ window._changeCardQty = (id, delta) => {
 window._handleBuy = (id) => {
   const p = products.find(pr => pr.id === id);
   if (!p) return;
-  const mat = document.getElementById('mat-'+id);
-  const qty = document.getElementById('qty-'+id);
-  // Pre-select in order form
   orderState.productId = id;
   orderState.productName = p.name;
   orderState.productPrice = p.price;
-  orderState.material = mat ? mat.value : 'PLA';
-  orderState.qty = qty ? parseInt(qty.value)||1 : 1;
-  // Render product grid and select this one
+  orderState.material = '';
+  orderState.qty = 1;
   renderOrderProductGrid();
-  // Highlight the right material card
   document.querySelectorAll('.material-card').forEach(c => c.classList.remove('selected'));
-  document.querySelectorAll('.material-card').forEach(c => {
-    if (c.querySelector('.mc-name').textContent === orderState.material) c.classList.add('selected');
-  });
-  // Set qty
-  document.getElementById('order-qty').value = orderState.qty;
-  // Jump to order page step 1
+  document.getElementById('order-qty').value = 1;
   goToOrderStep(1);
-  // Pre-update material availability for this product when they reach step 2
-  orderState._pendingMatUpdate = true;
   document.getElementById('order').scrollIntoView({behavior:'smooth'});
-  showToast('Fill in your details below ✦');
+  showToast('Choose your material and quantity below ❆');
 };
 
 let toastTimer;
@@ -1281,7 +1394,7 @@ function renderOrderProductGrid() {
     div.innerHTML = `<span class="opc-check">✓</span>
       <div class="opc-cat">${esc(p.category)}</div>
       <div class="opc-name">${esc(p.name)}</div>
-      <div class="opc-price">kr ${Number(p.price).toLocaleString('no-NO')}</div>`;
+      <div class="opc-price">${buildCardPrice(p)}</div>`;
     div.onclick = () => {
       orderState.productId = p.id;
       orderState.productName = p.name;
@@ -1388,7 +1501,16 @@ window.orderNext = (fromStep) => {
     const flRow = document.getElementById('rev-filelink-row');
     if (fl && flRow) flRow.style.display = fl.value ? '' : 'none';
     if (fl && document.getElementById('rev-filelink')) document.getElementById('rev-filelink').textContent = fl.value || '—';
-    document.getElementById('rev-price').textContent = 'kr ' + (Number(orderState.productPrice) * orderState.qty).toLocaleString('no-NO') + ' (estimated)';
+    const revPriceEl = document.getElementById('rev-price');
+    const selP = products.find(pr => pr.id === orderState.productId);
+    if (selP && selP.priceMode === 'quote') {
+      revPriceEl.textContent = 'Price will be discussed — we\u2019ll contact you';
+    } else if (selP && selP.priceMode === 'material') {
+      const matP = (selP.materialPrices && selP.materialPrices[orderState.material]) || selP.price || 0;
+      revPriceEl.textContent = 'kr ' + (Number(matP) * orderState.qty).toLocaleString('no-NO') + ' (estimated)';
+    } else {
+      revPriceEl.textContent = 'kr ' + (Number(orderState.productPrice) * orderState.qty).toLocaleString('no-NO') + ' (estimated)';
+    }
     goToOrderStep(4);
   }
   document.getElementById('order').scrollIntoView({behavior:'smooth'});
@@ -1416,19 +1538,31 @@ window.submitOrder = async () => {
     address: document.getElementById('o-address').value.trim(),
     notes: document.getElementById('o-notes').value.trim(),
     fileLink: document.getElementById('o-filelink') ? document.getElementById('o-filelink').value.trim() : '',
-    estimatedPrice: Number(orderState.productPrice) * orderState.qty,
+    estimatedPrice: (() => {
+      const sp = products.find(pr => pr.id === orderState.productId);
+      if (sp && sp.priceMode === 'quote') return 'on request';
+      if (sp && sp.priceMode === 'material') {
+        const mp = (sp.materialPrices && sp.materialPrices[orderState.material]) || sp.price || 0;
+        return Number(mp) * orderState.qty;
+      }
+      return Number(orderState.productPrice) * orderState.qty;
+    })(),
     status: 'new',
     createdAt: new Date().toISOString()
   };
 
-  // Save to Firestore
+  // Save to Firestore orders collection
   if (FB_READY && db) {
     try {
       const ordersCol = collection(db, 'orders');
-      await addDoc(ordersCol, orderData);
+      const docRef = await addDoc(ordersCol, orderData);
+      console.log('Order saved to Firestore with ID:', docRef.id);
     } catch(e) {
-      console.warn('Firestore order save failed:', e.message);
+      console.error('Firestore order save failed:', e.message);
+      showToast('Order saved locally but cloud sync failed: ' + e.message);
     }
+  } else {
+    console.warn('Firebase not ready — order not persisted to cloud');
   }
 
   // Show success
