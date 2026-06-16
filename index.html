@@ -907,12 +907,13 @@ function applySettings() {
 
 // ── PRODUCT OPTION TOGGLES ──────────────────────────────
 window._toggleFixedColour = (id, enabled) => {
+  // Fixed colour shows when "allow free choice" is OFF
   const wrap = document.getElementById('fixedcolourwrap-'+id);
-  if (wrap) wrap.classList.toggle('visible', enabled);
+  if (wrap) wrap.classList.toggle('visible', !enabled);
 };
 window._toggleNewFixedColour = (enabled) => {
   const wrap = document.getElementById('new-fixed-colour-wrap');
-  if (wrap) wrap.classList.toggle('visible', enabled);
+  if (wrap) wrap.classList.toggle('visible', !enabled);
 };
 
 // Update order step 3 fields based on selected product's settings
@@ -937,8 +938,16 @@ function applyProductOrderOptions() {
   }
 
   // Colour field
-  if (!p.allowColour) {
-    // Product has no colour option at all — hide the field
+  if (!p.allowColour && p.fixedColour && p.fixedColour.trim()) {
+    // Fixed colour set by us — show as read-only
+    colourWrap.classList.remove('field-hidden');
+    colourWrap.classList.add('field-fixed');
+    colourInput.value = p.fixedColour.trim();
+    colourInput.setAttribute('readonly', true);
+    colourBadge.textContent = 'Colour is fixed for this product';
+    colourBadge.style.display = 'block';
+  } else if (!p.allowColour) {
+    // No colour option and no fixed colour — hide entirely
     colourWrap.classList.add('field-hidden');
     colourInput.value = '';
   } else if (p.fixedColour && p.fixedColour.trim()) {
@@ -1169,7 +1178,7 @@ function render() {
                   <div class="prod-option-toggle-desc">Customer can request a colour or finish. Uncheck for fixed-colour products.</div>
                 </div>
               </label>
-              <div class="prod-colour-fixed-wrap ${p.allowColour?'visible':''}" id="fixedcolourwrap-${p.id}">
+              <div class="prod-colour-fixed-wrap ${p.allowColour?'':'visible'}" id="fixedcolourwrap-${p.id}">
                 <label style="font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.28rem;">Fixed colour (leave blank for free choice)</label>
                 <input type="text" id="fixedcolour-${p.id}" value="${esc(p.fixedColour||'')}" placeholder="e.g. Matte Black" oninput="window._pendingUpdate('${p.id}','fixedColour',this.value)">
               </div>
