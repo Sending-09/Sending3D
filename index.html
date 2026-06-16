@@ -328,6 +328,18 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
 .order-field.field-fixed input { background:var(--bg); color:var(--muted); cursor:not-allowed; pointer-events:none; }
 .field-fixed-badge { font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent2); margin-top:.25rem; }
 
+/* CONTACT MESSAGE FORM */
+.contact-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; margin-bottom:1rem; }
+.cf-field { display:flex; flex-direction:column; gap:.28rem; }
+.cf-field.full { grid-column:1/-1; }
+.cf-label { font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); }
+.cf-input { background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Sans',sans-serif; font-size:.88rem; padding:.55rem .75rem; border-radius:2px; transition:border-color .2s; resize:vertical; }
+.cf-input:focus { outline:none; border-color:var(--accent); }
+.btn-cf-send { padding:.65rem 1.8rem; background:var(--accent); color:var(--bg); border:none; font-family:'DM Sans',sans-serif; font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; border-radius:2px; transition:opacity .2s; }
+.btn-cf-send:hover { opacity:.85; }
+.btn-cf-send:disabled { opacity:.5; cursor:not-allowed; }
+@media (max-width:600px) { .contact-form-grid { grid-template-columns:1fr; } }
+
 </style>
 </head>
 <body>
@@ -724,21 +736,46 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
     <p id="contact-desc">Have a custom order, question, or idea? Reach out — we'd love to hear from you.</p>
   </div>
   <div class="contact-details">
-    <div class="contact-item">
-      <span class="lbl">Email</span>
-      <span class="value"><a id="display-email" href="mailto:hello@sending3d.no">hello@sending3d.no</a></span>
+
+    <!-- PUBLIC: MESSAGE FORM -->
+    <div id="contact-message-form">
+      <div class="contact-form-grid">
+        <div class="cf-field">
+          <label class="cf-label">Your name *</label>
+          <input id="cf-name" type="text" placeholder="Ola Nordmann" class="cf-input">
+        </div>
+        <div class="cf-field">
+          <label class="cf-label">Reply-to email *</label>
+          <input id="cf-email" type="email" placeholder="ola@example.com" class="cf-input">
+        </div>
+        <div class="cf-field full">
+          <label class="cf-label">Subject</label>
+          <input id="cf-subject" type="text" placeholder="Question, complaint, custom request…" class="cf-input">
+        </div>
+        <div class="cf-field full">
+          <label class="cf-label">Message *</label>
+          <textarea id="cf-message" rows="5" placeholder="Write your message here…" class="cf-input"></textarea>
+        </div>
+      </div>
+      <button class="btn-cf-send" id="btn-cf-send" onclick="sendContactMessage()">Send Message &#10022;</button>
     </div>
-    <div class="contact-item">
-      <span class="lbl">Phone</span>
-      <span class="value"><a id="display-phone" href="tel:+4700000000">+47 000 00 000</a></span>
+
+    <!-- SUCCESS STATE -->
+    <div id="contact-message-success" style="display:none;padding:2rem 0;text-align:center;">
+      <div style="font-size:2rem;margin-bottom:.8rem;">&#10022;</div>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--accent);margin-bottom:.5rem;">Message received</p>
+      <p style="font-size:.84rem;color:var(--muted);line-height:1.7;">We&#8217;ll get back to you at the address you provided.</p>
+      <button onclick="resetContactForm()" style="margin-top:1.2rem;background:none;border:1px solid var(--border);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;padding:.45rem 1rem;cursor:pointer;border-radius:2px;">Send another</button>
     </div>
-    <button class="edit-contact-btn" id="contactEditBtn" onclick="toggleContactEdit()">✦ Edit Contact Info</button>
+
+    <!-- DEV: EDIT CONTACT SETTINGS -->
+    <button class="edit-contact-btn" id="contactEditBtn" onclick="toggleContactEdit()" style="display:none;">&#10022; Edit Contact Info</button>
     <div class="contact-edit-form" id="contactEditForm">
       <label>Section heading</label>
       <input id="edit-contact-heading" type="text" placeholder="Get in Touch">
       <label>Description text</label>
       <textarea id="edit-contact-desc" rows="3" style="background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;padding:.55rem .75rem;border-radius:2px;width:100%;resize:vertical;"></textarea>
-      <label>Email address</label>
+      <label>Your email (where messages are forwarded)</label>
       <input id="edit-email" type="email" placeholder="your@email.com">
       <label>Phone number</label>
       <input id="edit-phone" type="tel" placeholder="+47 000 00 000">
@@ -747,12 +784,19 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
       <p style="font-size:.66rem;color:var(--muted);margin-top:-.4rem;">Upload to <a href="https://imgur.com" target="_blank" style="color:var(--accent)">imgur.com</a> and paste the link. Recommended: transparent PNG, height ~36px.</p>
       <button class="btn-save-contact" onclick="saveContact()">Save</button>
     </div>
+
+    <!-- Hidden elements kept for applySettings compatibility -->
+    <span id="display-email" style="display:none;" href=""></span>
+    <span id="display-phone" style="display:none;"></span>
   </div>
 </section>
 
 <div class="bottom-bar">
-  <div class="logo">Sending 3D</div>
-  <p>© 2026 Sending 3D — All rights reserved.</p>
+  <div class="logo" onclick="navTo('home')" style="cursor:pointer;">
+    <img id="footer-logo-img" src="" alt="Sending 3D" style="display:none;height:32px;width:auto;object-fit:contain;vertical-align:middle;">
+    <span id="footer-logo-text">Sending 3D</span>
+  </div>
+  <p>&#169; 2026 Sending 3D &#8212; All rights reserved.</p>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -780,9 +824,10 @@ const EMOJIS = ['🖨️','⚙️','🔩','🧩','🪄','📐','🔧','💠'];
 
 // Detect if Firebase is configured
 const FB_READY = FIREBASE_CONFIG.apiKey !== 'PASTE_YOUR_apiKey_HERE';
-// Firestore collections used: products, settings, orders
+// Firestore collections used: products, settings, orders, messages
 // Make sure your Firestore rules allow read/write to 'orders':
 //   match /orders/{id} { allow read, write: if true; }
+//   match /messages/{id} { allow read, write: if true; }
 
 let db, productsCol, settingsCol;
 let products = [];
@@ -883,13 +928,19 @@ function applySettings() {
   document.getElementById('edit-logo-url').value = siteSettings.logoUrl||'';
   const logoImg = document.getElementById('nav-logo-img');
   const logoText = document.getElementById('nav-logo-text');
+  const fLogoImg = document.getElementById('footer-logo-img');
+  const fLogoText = document.getElementById('footer-logo-text');
   if (siteSettings.logoUrl) {
     logoImg.src = siteSettings.logoUrl;
     logoImg.style.display = 'inline-block';
     logoText.style.display = 'none';
+    if (fLogoImg) { fLogoImg.src = siteSettings.logoUrl; fLogoImg.style.display = 'inline-block'; }
+    if (fLogoText) fLogoText.style.display = 'none';
   } else {
     logoImg.style.display = 'none';
     logoText.style.display = 'inline';
+    if (fLogoImg) fLogoImg.style.display = 'none';
+    if (fLogoText) fLogoText.style.display = 'inline';
   }
   if (siteSettings.about) {
     const at = document.getElementById('about-text');
@@ -1500,7 +1551,7 @@ window.attemptLogin=()=>{
 function enterDev(){
   devMode=true;
   document.getElementById('devToolbar').classList.add('visible');
-  document.getElementById('contactEditBtn').classList.add('dev-visible');
+  document.getElementById('contactEditBtn').style.display = 'block';
   showToast('Developer mode active');
 }
 window.exitDev=()=>{
@@ -1509,7 +1560,7 @@ window.exitDev=()=>{
   if(shopEditMode)window.toggleShopEdit();
   if(aboutEditing)window.toggleAboutEdit();
   document.getElementById('devToolbar').classList.remove('visible');
-  document.getElementById('contactEditBtn').classList.remove('dev-visible');
+  document.getElementById('contactEditBtn').style.display = 'none';
   document.getElementById('contactEditForm').classList.remove('visible');
   document.getElementById('contactEditBtn').textContent='✦ Edit Contact Info';
   document.getElementById('editContactBtn2').classList.remove('active');
@@ -1858,6 +1909,52 @@ window.resetOrder = () => {
   document.getElementById('orderFormWrap').style.display = 'block';
   goToOrderStep(1);
   renderOrderProductGrid();
+};
+
+// ── CONTACT MESSAGE FORM ─────────────────────────────────
+window.sendContactMessage = async () => {
+  const name    = document.getElementById('cf-name').value.trim();
+  const email   = document.getElementById('cf-email').value.trim();
+  const subject = document.getElementById('cf-subject').value.trim();
+  const message = document.getElementById('cf-message').value.trim();
+  if (!name)    { showToast('Please enter your name.'); return; }
+  if (!email || !email.includes('@')) { showToast('Please enter a valid email.'); return; }
+  if (!message) { showToast('Please write a message.'); return; }
+
+  const btn = document.getElementById('btn-cf-send');
+  btn.textContent = 'Sending…'; btn.disabled = true;
+
+  const msgData = {
+    name, email, subject: subject || '(no subject)',
+    message, replyTo: email,
+    createdAt: new Date().toISOString(),
+    status: 'unread'
+  };
+
+  if (FB_READY && db) {
+    try {
+      await addDoc(collection(db, 'messages'), msgData);
+      showToast('Message sent ✓');
+    } catch(e) {
+      showToast('Send failed: ' + e.message);
+      btn.textContent = 'Send Message ✦'; btn.disabled = false;
+      return;
+    }
+  } else {
+    showToast('Sent (offline — not saved to cloud)');
+  }
+
+  document.getElementById('contact-message-form').style.display = 'none';
+  document.getElementById('contact-message-success').style.display = 'block';
+  btn.textContent = 'Send Message ✦'; btn.disabled = false;
+};
+
+window.resetContactForm = () => {
+  ['cf-name','cf-email','cf-subject','cf-message'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.getElementById('contact-message-form').style.display = '';
+  document.getElementById('contact-message-success').style.display = 'none';
 };
 
 init();
