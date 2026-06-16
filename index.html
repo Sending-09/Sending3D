@@ -48,7 +48,9 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
 #hero-title { font-family:'Cormorant Garamond',serif; font-size:clamp(2.4rem,7vw,5rem); font-weight:300; line-height:1.05; margin-bottom:1.2rem; }
 #hero-title em { font-style:italic; color:var(--accent); }
 #hero-sub { color:var(--muted); font-size:clamp(.88rem,1.5vw,.95rem); max-width:480px; line-height:1.8; }
-.divider { border:none; border-top:1px solid var(--border); margin:0 var(--pad); }
+.divider { border:none; position:relative; margin:0; padding:0; height:24px; background:transparent; display:flex; align-items:center; }
+.divider::before { content:''; display:block; flex:1; height:1px; background:linear-gradient(90deg, var(--accent2), transparent); opacity:.4; }
+.divider[data-label]::after { content:attr(data-label); flex-shrink:0; padding:0 var(--pad) 0 .9rem; font-size:.57rem; letter-spacing:.22em; text-transform:uppercase; color:var(--accent2); white-space:nowrap; opacity:.7; }
 
 /* ABOUT */
 #about { padding:clamp(2.5rem,6vw,4rem) var(--pad); }
@@ -122,7 +124,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
 .btn-add-submit:hover { opacity:.85; }
 
 /* CONTACT */
-#contact { border-top:1px solid var(--border); padding:clamp(2.5rem,6vw,4rem) var(--pad) clamp(2rem,5vw,3rem); display:grid; grid-template-columns:1fr 1fr; gap:clamp(1.5rem,4vw,3rem); align-items:start; }
+#contact { padding:clamp(2.5rem,6vw,4rem) var(--pad) clamp(2rem,5vw,3rem); display:grid; grid-template-columns:1fr 1fr; gap:clamp(1.5rem,4vw,3rem); align-items:start; }
 .contact-left h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(1.6rem,4vw,2.2rem); font-weight:300; color:var(--accent); margin-bottom:.8rem; }
 .contact-left p { color:var(--muted); font-size:clamp(.85rem,1.5vw,.9rem); line-height:1.8; }
 .contact-details { display:flex; flex-direction:column; gap:1.2rem; }
@@ -197,7 +199,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
 .qty-row input[type=number] { width:70px; text-align:center; }
 
 /* ORDER PAGE */
-#order { border-top:1px solid var(--border); padding:clamp(2.5rem,6vw,4rem) var(--pad); }
+#order { padding:clamp(2.5rem,6vw,4rem) var(--pad); }
 #order .section-header { padding:0 0 1.8rem; }
 #order .section-header h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(1.6rem,4vw,2.2rem); font-weight:300; color:var(--accent); }
 #order .section-header p { color:var(--muted); font-size:.88rem; margin-top:.5rem; line-height:1.7; }
@@ -225,6 +227,8 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
 .material-card .mc-desc { font-size:.75rem; color:var(--muted); line-height:1.55; }
 .material-card .mc-props { display:flex; gap:.4rem; flex-wrap:wrap; margin-top:.5rem; }
 .material-card .mc-tag { font-size:.6rem; letter-spacing:.08em; text-transform:uppercase; border:1px solid var(--border); color:var(--muted); padding:.15rem .45rem; border-radius:2px; }
+.material-card .mc-price { font-family:'Cormorant Garamond',serif; font-size:1rem; color:#6dbf7e; margin-top:.5rem; }
+.material-card .mc-price-note { font-size:.68rem; color:var(--muted); margin-top:.3rem; font-style:italic; }
 .order-form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:.9rem; margin-bottom:1.2rem; }
 .order-field label { font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); display:block; margin-bottom:.28rem; }
 .order-field input, .order-field textarea, .order-field select { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'DM Sans',sans-serif; font-size:.88rem; padding:.55rem .75rem; border-radius:2px; transition:border-color .2s; }
@@ -433,7 +437,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
   <h1 id="hero-title">Printed with<br><em id="hero-line2">precision</em></h1>
   <p id="hero-sub">Custom 3D-printed objects, prototypes, and art pieces — designed and produced with care. Every order shaped from scratch.</p>
 </section>
-<hr class="divider">
+<hr class="divider" data-label="About">
 
 <!-- ABOUT -->
 <section id="about">
@@ -441,7 +445,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
   <p id="about-text">We are Sending 3D — a small studio passionate about turning ideas into physical objects. From functional parts to decorative pieces, we work with a range of materials and finishes. Get in touch to discuss your project.</p>
   <p class="edit-hint" id="aboutNote">✦ Click the text above to edit. Saves automatically when you click away.</p>
 </section>
-<hr class="divider">
+<hr class="divider" data-label="Shop">
 
 <!-- SHOP -->
 <div id="shop">
@@ -516,7 +520,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
     <button class="btn-add-submit" onclick="addProduct()">Add Product</button>
   </div>
 </div>
-<hr class="divider">
+<hr class="divider" data-label="Place an Order">
 
 
 <!-- ORDER PAGE -->
@@ -727,7 +731,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(14,14,14,0.95); backd
     </div>
   </div>
 </section>
-<hr class="divider">
+<hr class="divider" data-label="Contact">
 
 <!-- CONTACT -->
 <section id="contact">
@@ -1751,6 +1755,10 @@ window.changeQty = (delta) => {
   const input = document.getElementById('order-qty');
   input.value = Math.max(1, Math.min(100, (parseInt(input.value)||1) + delta));
 };
+// Also update totals on the material cards if qty changes while on step 2
+document.addEventListener('change', e => {
+  if (e.target && e.target.id === 'order-qty') updateOrderMaterialCards();
+});
 
 window.selectMaterial = (name) => {
   orderState.material = name;
@@ -1759,10 +1767,14 @@ window.selectMaterial = (name) => {
   });
 };
 
-// Update material cards in step 2 based on selected product's material availability
+// Update material cards in step 2 based on selected product's material availability + pricing
 function updateOrderMaterialCards() {
   const p = products.find(pr => pr.id === orderState.productId);
   const mats = (p && p.materials) ? p.materials : {};
+  const matPrices = (p && p.materialPrices) ? p.materialPrices : {};
+  const priceMode = (p && p.priceMode) || 'fixed';
+  const basePrice = p ? Number(p.price)||0 : 0;
+
   document.querySelectorAll('.material-card').forEach(card => {
     const name = card.querySelector('.mc-name').textContent;
     const st = mats[name] || 'unavailable';
@@ -1771,7 +1783,8 @@ function updateOrderMaterialCards() {
     card.style.opacity = (isUnavail || isOut) ? '0.35' : '1';
     card.style.pointerEvents = (isUnavail || isOut) ? 'none' : '';
     card.style.cursor = (isUnavail || isOut) ? 'not-allowed' : '';
-    // Show/hide stock badge
+
+    // Stock badge
     let badge = card.querySelector('.mc-stock-badge');
     if (!badge) {
       badge = document.createElement('div');
@@ -1783,6 +1796,58 @@ function updateOrderMaterialCards() {
     else if (isOut) { badge.textContent = 'Out of stock'; badge.style.color = 'var(--danger)'; }
     else if (st === 'low') { badge.textContent = 'Low stock'; badge.style.color = '#c07a3a'; }
     else { badge.textContent = ''; }
+
+    // Price badge — only show if product is selected and has pricing
+    let priceBadge = card.querySelector('.mc-price');
+    let priceNote = card.querySelector('.mc-price-note');
+
+    if (!p) {
+      if (priceBadge) priceBadge.remove();
+      if (priceNote) priceNote.remove();
+      return;
+    }
+
+    if (priceMode === 'quote') {
+      if (!priceBadge) { priceBadge = document.createElement('div'); priceBadge.className = 'mc-price'; card.insertBefore(priceBadge, badge); }
+      priceBadge.textContent = 'Price on request';
+      priceBadge.style.fontSize = '.76rem';
+      priceBadge.style.fontStyle = 'italic';
+      priceBadge.style.fontFamily = 'inherit';
+      priceBadge.style.color = 'var(--muted)';
+      if (priceNote) priceNote.remove();
+    } else if (priceMode === 'material' && matPrices[name]) {
+      if (!priceBadge) { priceBadge = document.createElement('div'); priceBadge.className = 'mc-price'; card.insertBefore(priceBadge, badge); }
+      const qty = parseInt(document.getElementById('order-qty').value)||1;
+      const unitPrice = Number(matPrices[name]);
+      priceBadge.style.fontSize = '';
+      priceBadge.style.fontStyle = '';
+      priceBadge.style.fontFamily = '';
+      priceBadge.style.color = '';
+      priceBadge.textContent = 'kr ' + unitPrice.toLocaleString('no-NO') + ' / unit';
+      if (qty > 1) {
+        if (!priceNote) { priceNote = document.createElement('div'); priceNote.className = 'mc-price-note'; card.insertBefore(priceNote, badge); }
+        priceNote.textContent = 'Total: kr ' + (unitPrice * qty).toLocaleString('no-NO') + ' for ' + qty;
+      } else {
+        if (priceNote) priceNote.remove();
+      }
+    } else if (priceMode === 'fixed' && basePrice > 0) {
+      if (!priceBadge) { priceBadge = document.createElement('div'); priceBadge.className = 'mc-price'; card.insertBefore(priceBadge, badge); }
+      const qty = parseInt(document.getElementById('order-qty').value)||1;
+      priceBadge.style.fontSize = '';
+      priceBadge.style.fontStyle = '';
+      priceBadge.style.fontFamily = '';
+      priceBadge.style.color = '';
+      priceBadge.textContent = 'kr ' + basePrice.toLocaleString('no-NO') + ' / unit';
+      if (qty > 1) {
+        if (!priceNote) { priceNote = document.createElement('div'); priceNote.className = 'mc-price-note'; card.insertBefore(priceNote, badge); }
+        priceNote.textContent = 'Total: kr ' + (basePrice * qty).toLocaleString('no-NO') + ' for ' + qty;
+      } else {
+        if (priceNote) priceNote.remove();
+      }
+    } else {
+      if (priceBadge) priceBadge.remove();
+      if (priceNote) priceNote.remove();
+    }
   });
 }
 
